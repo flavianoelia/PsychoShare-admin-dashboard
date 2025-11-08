@@ -1,0 +1,9 @@
+.panda-container {
+  margin: 2rem 0;
+}
+
+.panda-image {
+  width: 200px;
+  height: auto;
+  max-width: 100%;
+}

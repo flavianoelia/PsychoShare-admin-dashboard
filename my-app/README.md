@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# PsychoShare Admin Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Panel administrativo para la red social PsychoShare. Permite gestionar usuarios, reportes, bans y administradores del sistema.
 
-## Available Scripts
+## Tecnologías
 
-In the project directory, you can run:
+- React 19
+- React Router DOM
+- Bootstrap 5
+- JavaScript ES6+
 
-### `npm start`
+## Instalación
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+npm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Ejecución
 
-### `npm test`
+```bash
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Abre [http://localhost:3000](http://localhost:3000) para ver la aplicación.
 
-### `npm run build`
+## Funcionalidades
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Gestión de Usuarios
+- Ver lista de usuarios del sistema
+- Ver detalles de usuarios específicos
+- Estadísticas de usuarios
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Gestión de Reportes  
+- Lista de reportes pendientes
+- Revisar y resolver reportes
+- Historial de reportes procesados
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Gestión de Bans
+- Ver usuarios baneados activos
+- Banear/desbanear usuarios
+- Gestionar duraciones de bans
 
-### `npm run eject`
+### Administradores
+- Gestión de permisos administrativos
+- Alta/baja de administradores
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Estructura del Proyecto
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+src/
+├── components/
+│   ├── admin/          # Componentes específicos de admin
+│   ├── Footer/         # Footer de la aplicación  
+│   └── NavBar/         # Barra de navegación
+├── pages/              # Páginas principales
+├── services/
+│   └── admin/          # Servicios API para admin
+└── App.js              # Componente principal
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## API Backend
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Este frontend consume las APIs del backend PsychoShare:
+- `/Report` - Gestión de reportes
+- `/Ban` - Gestión de bans  
+- `/api/User` - Gestión de usuarios
 
-## Learn More
+## Licencia
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT License
