@@ -1,5 +1,5 @@
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://localhost:7096';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5174';
 
 export const usersService = {
 
