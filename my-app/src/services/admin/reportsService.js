@@ -126,10 +126,38 @@ export const reportsService = {
         }
       ];
 
-      // Filter by status if provided
+      // Apply filters
       let filteredReports = mockReports;
+
+      // Filter by status
       if (filters.status) {
-        filteredReports = mockReports.filter(report => report.status === filters.status);
+        filteredReports = filteredReports.filter(report => report.status === filters.status);
+      }
+
+      // Filter by content type
+      if (filters.contentType) {
+        filteredReports = filteredReports.filter(report => report.contentType === filters.contentType);
+      }
+
+      // Filter by date range
+      if (filters.startDate && filters.endDate) {
+        filteredReports = filteredReports.filter(report => {
+          const reportDate = new Date(report.createdAt);
+          const startDate = new Date(filters.startDate);
+          const endDate = new Date(filters.endDate);
+          return reportDate >= startDate && reportDate <= endDate;
+        });
+      }
+
+      // Search filter
+      if (filters.search) {
+        const searchTerm = filters.search.toLowerCase();
+        filteredReports = filteredReports.filter(report =>
+          report.reporterUsername?.toLowerCase().includes(searchTerm) ||
+          report.reportedUsername?.toLowerCase().includes(searchTerm) ||
+          report.reason?.toLowerCase().includes(searchTerm) ||
+          report.description?.toLowerCase().includes(searchTerm)
+        );
       }
 
       // Simulate pagination
