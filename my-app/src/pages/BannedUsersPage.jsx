@@ -126,114 +126,136 @@ function BannedUsersPage() {
   }
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>🚫 Banned Users Management</h1>
-        <button 
-          className="btn btn-danger"
-          onClick={handleNewBan}
-          type="button"
-        >
-          🔒 Ban User
-        </button>
+    <div className="container-fluid mt-4">
+      {/* Header */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <h1 className="h3 mb-0">🚫 Banned Users Management</h1>
+              <p className="text-muted">Sistema para gestionar usuarios baneados</p>
+            </div>
+            <button 
+              className="btn btn-danger"
+              onClick={handleNewBan}
+              type="button"
+            >
+              🔒 Ban User
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Status Filters */}
       <div className="row mb-3">
         <div className="col-md-8">
-          <div className="btn-group" role="group">
+          <div className="btn-group" role="group" aria-label="Filtros de estado">
             <button 
               className={`btn ${!filters.status ? 'btn-primary' : 'btn-outline-primary'}`}
               onClick={clearFilters}
               type="button"
             >
-              All Bans
+              🚫 All Bans
             </button>
             <button 
               className={`btn ${filters.status === 'active' ? 'btn-danger' : 'btn-outline-danger'}`}
               onClick={() => handleStatusFilter('active')}
               type="button"
             >
-              Active Bans
+              ⚡ Active Bans
             </button>
             <button 
               className={`btn ${filters.status === 'expired' ? 'btn-secondary' : 'btn-outline-secondary'}`}
               onClick={() => handleStatusFilter('expired')}
               type="button"
             >
-              Expired/Lifted
+              ⏰ Expired/Lifted
             </button>
           </div>
         </div>
         <div className="col-md-4 text-end">
           <small className="text-muted">
-            Showing {bans.length} of {totalCount} banned users
+            📊 Mostrando {bans.length} de {totalCount} usuarios baneados
+            {filters.status && (
+              <span className="badge bg-secondary ms-2">
+                Filtrado: {filters.status}
+              </span>
+            )}
           </small>
         </div>
       </div>
 
-      {/* Ban Type Filters */}
+      {/* Advanced Filters */}
       <div className="row mb-4">
-        <div className="col-md-3">
-          <label className="form-label">Ban Type</label>
-          <select 
-            className="form-select form-select-sm"
-            value={filters.banType || ''}
-            onChange={(e) => handleStatusFilter('banType', 'banType', e.target.value)}
-          >
-            <option value="">All Types</option>
-            <option value="Temporary">Temporary</option>
-            <option value="Permanent">Permanent</option>
-          </select>
-        </div>
-        <div className="col-md-3">
-          <label className="form-label">Date From</label>
-          <input 
-            type="date"
-            className="form-control form-control-sm"
-            value={filters.dateFrom || ''}
-            onChange={(e) => handleStatusFilter('dateFrom', 'dateFrom', e.target.value)}
-          />
-        </div>
-        <div className="col-md-3">
-          <label className="form-label">Date To</label>
-          <input 
-            type="date"
-            className="form-control form-control-sm"
-            value={filters.dateTo || ''}
-            onChange={(e) => handleStatusFilter('dateTo', 'dateTo', e.target.value)}
-          />
-        </div>
-        <div className="col-md-3">
-          <label className="form-label">Actions</label>
-          <div>
-            <button 
-              className="btn btn-outline-secondary btn-sm"
-              onClick={clearFilters}
-            >
-              Clear Filters
-            </button>
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="mb-0">🎯 Filtros Avanzados</h5>
+            </div>
+            <div className="card-body">
+              <div className="row g-3">
+                <div className="col-md-3">
+                  <label className="form-label">Tipo de Ban</label>
+                  <select 
+                    className="form-select"
+                    value={filters.banType || ''}
+                    onChange={(e) => handleStatusFilter('banType', 'banType', e.target.value)}
+                  >
+                    <option value="">Todos los tipos</option>
+                    <option value="Temporary">Temporario</option>
+                    <option value="Permanent">Permanente</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">📅 Fecha Desde</label>
+                  <input 
+                    type="date"
+                    className="form-control"
+                    value={filters.dateFrom || ''}
+                    onChange={(e) => handleStatusFilter('dateFrom', 'dateFrom', e.target.value)}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">📅 Fecha Hasta</label>
+                  <input 
+                    type="date"
+                    className="form-control"
+                    value={filters.dateTo || ''}
+                    onChange={(e) => handleStatusFilter('dateTo', 'dateTo', e.target.value)}
+                  />
+                </div>
+                <div className="col-md-3 d-flex align-items-end">
+                  <button 
+                    className="btn btn-outline-secondary w-100"
+                    onClick={clearFilters}
+                  >
+                    🗑️ Limpiar Filtros
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       
+      {/* Tabla de Usuarios Baneados */}
       <div className="row">
         <div className="col-12">
-          <div className="card">
-            <div className="card-body">
+          <div className="card shadow-sm">
+            <div className="card-body p-0">
               <div className="table-responsive">
-                <table className="table table-striped">
-                  <thead>
+                <table className="table table-hover mb-0">
+                  <thead className="table-dark">
                     <tr>
-                      <th>ID</th>
-                      <th>User</th>
-                      <th>Reason</th>
-                      <th>Type</th>
-                      <th>Status</th>
-                      <th>Ban Date</th>
-                      <th>Time Remaining</th>
-                      <th>Admin</th>
-                      <th>Actions</th>
+                      <th scope="col">ID</th>
+                      <th scope="col">👤 Usuario</th>
+                      <th scope="col">📝 Razón</th>
+                      <th scope="col">🔧 Tipo</th>
+                      <th scope="col">⚡ Estado</th>
+                      <th scope="col">⏰ Tiempo Restante</th>
+                      <th scope="col">👨‍💼 Admin</th>
+                      <th scope="col">📅 Fecha</th>
+                      <th scope="col" className="text-center">🔧 Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -265,31 +287,41 @@ function BannedUsersPage() {
                           </td>
                           <td>
                             <span className={`badge ${ban.banType === 'Permanent' ? 'bg-danger' : 'bg-info'}`}>
-                              {ban.banType}
+                              {ban.banType === 'Permanent' ? '∞ Permanente' : '⏰ Temporario'}
                             </span>
                           </td>
                           <td>
                             {getBanStatusBadge(ban)}
                           </td>
-                          <td>{new Date(ban.banDate).toLocaleDateString()}</td>
                           <td>
                             {ban.banType === 'Permanent' ? (
-                              <span className="text-danger fw-bold">Never</span>
-                            ) : ban.isActive ? (
-                              <span className="text-warning">{calculateTimeRemaining(ban.expiryDate)}</span>
-                            ) : (
                               <span className="text-muted">N/A</span>
+                            ) : (
+                              <span className="text-warning fw-bold">{calculateTimeRemaining(ban.expiryDate)}</span>
                             )}
                           </td>
                           <td>
-                            <small className="text-muted">{ban.adminUsername}</small>
+                            <div className="d-flex align-items-center">
+                              <div className="avatar-sm bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{width: '24px', height: '24px', fontSize: '10px'}}>
+                                {ban.adminUsername?.charAt(0)?.toUpperCase() || 'A'}
+                              </div>
+                              <small>{ban.adminUsername || 'System'}</small>
+                            </div>
                           </td>
                           <td>
-                            <div className="btn-group" role="group">
+                            <div className="small">
+                              <div>{new Date(ban.banDate).toLocaleDateString()}</div>
+                              <div className="text-muted">
+                                {new Date(ban.banDate).toLocaleTimeString()}
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="btn-group">
                               <button 
                                 className="btn btn-sm btn-outline-primary"
                                 onClick={() => handleViewBan(ban)}
-                                title="View Details"
+                                title="Ver detalles"
                               >
                                 👁️
                               </button>
@@ -297,7 +329,7 @@ function BannedUsersPage() {
                                 <button 
                                   className="btn btn-sm btn-outline-success"
                                   onClick={() => handleUnban(ban.userId, ban.username)}
-                                  title="Unban User"
+                                  title="Desbanear usuario"
                                 >
                                   🔓
                                 </button>
@@ -312,49 +344,118 @@ function BannedUsersPage() {
               </div>
             </div>
             
-            <div className="card-footer">
-              <nav>
-                <ul className="pagination pagination-sm mb-0 justify-content-center">
-                  <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                    <button 
-                      className="page-link"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </button>
-                  </li>
-                  
-                  {[...Array(Math.ceil(totalCount / pageSize))].map((_, index) => {
-                    const pageNum = index + 1;
-                    return (
-                      <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
-                        <button 
-                          className="page-link"
-                          onClick={() => handlePageChange(pageNum)}
-                        >
-                          {pageNum}
-                        </button>
-                      </li>
-                    );
-                  })}
-                  
-                  <li className={`page-item ${!hasMore ? 'disabled' : ''}`}>
-                    <button 
-                      className="page-link"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={!hasMore}
-                    >
-                      Next
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            </div>
+            {/* Paginación */}
+            {totalCount > pageSize && (
+              <div className="card-footer">
+                <nav aria-label="Banned users pagination">
+                  <ul className="pagination pagination-sm mb-0 justify-content-center">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                      <button 
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        ← Anterior
+                      </button>
+                    </li>
+                    
+                    {[...Array(Math.ceil(totalCount / pageSize))].map((_, index) => {
+                      const pageNum = index + 1;
+                      // Solo mostrar páginas cercanas para evitar demasiados botones
+                      if (pageNum === 1 || pageNum === Math.ceil(totalCount / pageSize) || 
+                          (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)) {
+                        return (
+                          <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                            <button 
+                              className="page-link"
+                              onClick={() => handlePageChange(pageNum)}
+                            >
+                              {pageNum}
+                            </button>
+                          </li>
+                        );
+                      } else if (pageNum === currentPage - 3 || pageNum === currentPage + 3) {
+                        return (
+                          <li key={pageNum} className="page-item disabled">
+                            <span className="page-link">...</span>
+                          </li>
+                        );
+                      }
+                      return null;
+                    })}
+                    
+                    <li className={`page-item ${!hasMore ? 'disabled' : ''}`}>
+                      <button 
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={!hasMore}
+                      >
+                        Siguiente →
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+                
+                <div className="text-center mt-2">
+                  <small className="text-muted">
+                    Página {currentPage} de {Math.ceil(totalCount / pageSize)} | 
+                    Total: {totalCount} usuarios baneados
+                  </small>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
+      <BanUserModal
+        isOpen={isBanModalOpen}
+        onClose={closeBanModal}
+        onBan={handleBanUser}
+      />
+      
+      <BanDetailsModal
+        ban={selectedBan}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onUnban={handleUnban}
+      />
+
+      <style jsx>{`
+        .avatar-sm {
+          width: 32px;
+          height: 32px;
+          font-size: 14px;
+        }
+        
+        .table-responsive {
+          border-radius: 8px;
+        }
+        
+        .card {
+          border: none;
+          border-radius: 12px;
+        }
+        
+        .badge {
+          font-size: 0.75em;
+        }
+        
+        .btn-group .btn {
+          border-radius: 4px;
+          margin: 0 1px;
+        }
+        
+        tr:hover {
+          background-color: rgba(220, 53, 69, 0.05);
+        }
+        
+        .table-warning {
+          background-color: rgba(255, 193, 7, 0.1);
+        }
+      `}</style>
+      
+      {/* Modals */}
       <BanUserModal
         isOpen={isBanModalOpen}
         onClose={closeBanModal}
