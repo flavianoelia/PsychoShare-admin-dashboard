@@ -1,0 +1,27 @@
+/* ReportDetailsModal.css */
+
+.report-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.report-modal-dialog {
+  max-width: 800px;
+}
+
+.report-status-badge {
+  font-size: 0.875rem;
+}
+
+.report-description-box {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 1rem;
+}
+
+.report-admin-notes {
+  background-color: rgba(13, 202, 240, 0.1);
+  border: 1px solid rgba(13, 202, 240, 0.2);
+  border-radius: 0.375rem;
+  padding: 1rem;
+}
