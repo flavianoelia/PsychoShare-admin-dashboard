@@ -34,10 +34,6 @@ function Reports() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleNewReport = () => {
-    console.log('Create new report - funcionalidad futura');
-  };
-
   const handleViewReport = (report) => {
     openModal(report);
   };
@@ -136,18 +132,11 @@ function Reports() {
             </div>
             <div className="d-flex gap-2">
               <button 
-                className={`btn ${showAdvancedFilters ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                className="btn btn-outline-secondary me-2"
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 type="button"
               >
                 🔍 {showAdvancedFilters ? 'Ocultar' : 'Filtros'} Avanzados
-              </button>
-              <button 
-                className="btn btn-primary"
-                onClick={handleNewReport}
-                type="button"
-              >
-                📝 + New Report
               </button>
             </div>
           </div>

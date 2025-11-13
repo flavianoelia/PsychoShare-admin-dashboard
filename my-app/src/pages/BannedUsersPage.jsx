@@ -3,6 +3,7 @@ import { useBans } from '../hooks/useBans';
 import { useModal } from '../hooks/useModal';
 import BanUserModal from '../components/admin/BanUserModal';
 import BanDetailsModal from '../components/admin/BanDetailsModal';
+import './BannedUsersPage.css';
 
 /**
  * Banned Users management page
@@ -22,7 +23,8 @@ function BannedUsersPage() {
     handleStatusFilter,
     clearFilters,
     unbanUser,
-    banUser
+    banUser,
+    refetchBans
   } = useBans();
 
   const { 
@@ -60,11 +62,18 @@ function BannedUsersPage() {
     );
     
     if (confirmed) {
-      const result = await unbanUser(userId);
-      if (result.success) {
-        alert(`User "${username}" has been unbanned successfully.`);
-      } else {
-        alert(result.error);
+      try {
+        const result = await unbanUser(userId);
+        if (result.success) {
+          alert(`User "${username}" has been unbanned successfully.`);
+          // Refresh the bans list
+          await refetchBans();
+        } else {
+          alert('Failed to unban user: ' + (result.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error unbanning user:', error);
+        alert('An error occurred while unbanning the user.');
       }
     }
   };
@@ -328,7 +337,7 @@ function BannedUsersPage() {
                               {ban.isActive && (
                                 <button 
                                   className="btn btn-sm btn-outline-success"
-                                  onClick={() => handleUnban(ban.userId, ban.username)}
+                                  onClick={() => handleUnban(ban.userId, ban.username || ban.userId)}
                                   title="Desbanear usuario"
                                 >
                                   🔓
@@ -408,54 +417,6 @@ function BannedUsersPage() {
         </div>
       </div>
 
-      <BanUserModal
-        isOpen={isBanModalOpen}
-        onClose={closeBanModal}
-        onBan={handleBanUser}
-      />
-      
-      <BanDetailsModal
-        ban={selectedBan}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onUnban={handleUnban}
-      />
-
-      <style jsx>{`
-        .avatar-sm {
-          width: 32px;
-          height: 32px;
-          font-size: 14px;
-        }
-        
-        .table-responsive {
-          border-radius: 8px;
-        }
-        
-        .card {
-          border: none;
-          border-radius: 12px;
-        }
-        
-        .badge {
-          font-size: 0.75em;
-        }
-        
-        .btn-group .btn {
-          border-radius: 4px;
-          margin: 0 1px;
-        }
-        
-        tr:hover {
-          background-color: rgba(220, 53, 69, 0.05);
-        }
-        
-        .table-warning {
-          background-color: rgba(255, 193, 7, 0.1);
-        }
-      `}</style>
-      
-      {/* Modals */}
       <BanUserModal
         isOpen={isBanModalOpen}
         onClose={closeBanModal}

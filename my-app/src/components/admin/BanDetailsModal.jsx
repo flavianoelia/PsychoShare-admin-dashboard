@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
+  const [isUnbanning, setIsUnbanning] = useState(false);
+  
   if (!isOpen || !ban) return null;
 
   const calculateTimeRemaining = (expiryDate) => {
@@ -22,18 +24,53 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
   };
 
   const handleUnban = () => {
+    console.log('Unban button clicked');
+    
+    if (isUnbanning) {
+      console.log('Already processing, ignoring...');
+      return;
+    }
+    
     const confirmed = window.confirm(
-      `Are you sure you want to unban user "${ban.username}"? This action cannot be undone.`
+      `Are you sure you want to unban user "${ban.username || ban.userId}"? This action cannot be undone.`
     );
     
     if (confirmed) {
-      onUnban(ban.userId, ban.username);
+      setIsUnbanning(true);
+      console.log('Calling onUnban...');
+      
+      try {
+        onUnban(ban.userId, ban.username || ban.userId);
+        console.log('onUnban called successfully');
+        
+        // Close modal after a short delay
+        setTimeout(() => {
+          onClose();
+          setIsUnbanning(false);
+        }, 500);
+      } catch (error) {
+        console.error('Error calling onUnban:', error);
+        setIsUnbanning(false);
+      }
     }
   };
 
   return (
-    <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-lg">
+    <div 
+      key={`ban-modal-${ban.id}`}
+      className="modal fade show d-block" 
+      style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}
+      onClick={(e) => {
+        // Only close if clicking the overlay, not the modal content
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div 
+        className="modal-dialog modal-lg"
+        onClick={(e) => e.stopPropagation()} // Prevent modal from closing when clicking inside
+      >
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">🚫 Ban Details - #{ban.id}</h5>
@@ -132,7 +169,7 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
               className="btn btn-secondary" 
               onClick={onClose}
             >
-              Close
+              Cercar
             </button>
             
             {ban.isActive && (
@@ -140,8 +177,10 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
                 type="button" 
                 className="btn btn-success" 
                 onClick={handleUnban}
+                disabled={isUnbanning}
+                style={{ pointerEvents: isUnbanning ? 'none' : 'auto' }}
               >
-                🔓 Unban User
+                {isUnbanning ? '🔄 Processing...' : '🔓 Desbloquear usuario'}
               </button>
             )}
           </div>
