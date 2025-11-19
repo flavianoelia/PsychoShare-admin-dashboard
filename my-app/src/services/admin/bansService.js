@@ -48,7 +48,7 @@ export const bansService = {
         email: ban.Email || ban.email || `${ban.Username || `user${ban.BannedUserId}`}@example.com`,
         reason: ban.Reason || ban.reason,
         adminUserId: ban.BannedByAdminId || ban.bannedByAdminId,
-        adminUsername: ban.AdminUsername || ban.adminUsername || 'Sistema',
+        adminUsername: ban.AdminUsername || ban.adminUsername || (ban.BannedByAdminId || ban.bannedByAdminId ? `Admin_${ban.BannedByAdminId || ban.bannedByAdminId}` : 'Sistema'),
         banDate: ban.StartDate || ban.startDate || ban.banDate,
         expiryDate: ban.EndDate || ban.endDate || ban.expiryDate,
         isActive: ban.IsActive !== undefined ? ban.IsActive : ban.isActive !== undefined ? ban.isActive : true,

@@ -1,0 +1,33 @@
+/* BannedUsersPage.css */
+
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.table-responsive {
+  border-radius: 8px;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.badge {
+  font-size: 0.75em;
+}
+
+.btn-group .btn {
+  border-radius: 4px;
+  margin: 0 1px;
+}
+
+tr:hover {
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+.table-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+}
