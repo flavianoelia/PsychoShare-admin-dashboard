@@ -77,15 +77,8 @@ function Reports() {
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="mb-4">
         <h1>Reports Management</h1>
-        <button 
-          className="btn btn-primary"
-          onClick={handleNewReport}
-          type="button"
-        >
-          + New Report
-        </button>
       </div>
 
       {/* Filtros de Estado */}
@@ -239,7 +232,7 @@ function Reports() {
                             {report.status}
                           </span>
                         </td>
-                        <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                        <td>{new Date(report.reportDate || report.createdAt).toLocaleDateString()}</td>
                         <td>
                           <div className="btn-group" role="group">
                             <button 

@@ -15,10 +15,10 @@ function NavBar() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">Panel Principal</Nav.Link>
-            <Nav.Link as={Link} to="/users">Usuarios</Nav.Link>
-            <Nav.Link as={Link} to="/reports">Reportes</Nav.Link>
-            <Nav.Link as={Link} to="/bans">Usuarios Baneados</Nav.Link>
-            <Nav.Link as={Link} to="/admins">Administradores</Nav.Link>
+            <Nav.Link as={Link} to="/admin/users">Usuarios</Nav.Link>
+            <Nav.Link as={Link} to="/admin/reports">Reportes</Nav.Link>
+            <Nav.Link as={Link} to="/admin/bans">Usuarios Baneados</Nav.Link>
+            <Nav.Link as={Link} to="/admin/admins">Administradores</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

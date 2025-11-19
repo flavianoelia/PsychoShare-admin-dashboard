@@ -12,7 +12,7 @@ export const reportsService = {
         ...filters
       });
 
-      const response = await fetch(`${API_BASE_URL}/Report?${params}`, {
+      const response = await fetch(`${API_BASE_URL}/api/Report?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -147,7 +147,7 @@ export const reportsService = {
 
 
   getReportById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/Report/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/Report/${id}`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
@@ -158,7 +158,7 @@ export const reportsService = {
 
   resolveReport: async (id, approved, reason = '') => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Report/${id}/resolve`, {
+      const response = await fetch(`${API_BASE_URL}/api/Report/${id}/resolve`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ export const reportsService = {
 
 
   deleteReport: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/Report/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/Report/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
