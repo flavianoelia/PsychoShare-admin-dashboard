@@ -193,10 +193,7 @@ export const reportsService = {
 
 
   getReportById: async (id) => {
-<<<<<<< HEAD
-=======
     const token = localStorage.getItem('token') || 'test-admin-token';
->>>>>>> origin/development
     const response = await fetch(`${API_BASE_URL}/api/Report/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`

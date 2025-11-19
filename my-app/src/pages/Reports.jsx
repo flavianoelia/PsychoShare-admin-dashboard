@@ -121,11 +121,6 @@ function Reports() {
   }
 
   return (
-<<<<<<< HEAD
-    <div className="container mt-4">
-      <div className="mb-4">
-        <h1>Reports Management</h1>
-=======
     <div className="container-fluid mt-4">
       {/* Header */}
       <div className="row mb-4">
@@ -146,7 +141,6 @@ function Reports() {
             </div>
           </div>
         </div>
->>>>>>> origin/development
       </div>
 
       {/* Filtros Avanzados */}
@@ -348,10 +342,6 @@ function Reports() {
                             {report.contentType || 'Other'}
                           </span>
                         </td>
-<<<<<<< HEAD
-                        <td>{new Date(report.reportDate || report.createdAt).toLocaleDateString()}</td>
-=======
->>>>>>> origin/development
                         <td>
                           <span className={`badge ${getStatusBadgeColor(report.status)}`}>
                             {report.status}
