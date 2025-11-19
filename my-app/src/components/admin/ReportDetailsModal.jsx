@@ -116,16 +116,18 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
                 <button 
                   type="button" 
                   className="btn btn-danger" 
-                  onClick={() => onReject(report.id)}
+                  onClick={handleReject}
+                  disabled={isProcessing}
                 >
-                  Reject Report
+                  {isProcessing ? 'Processing...' : 'Reject Report'}
                 </button>
                 <button 
                   type="button" 
                   className="btn btn-success" 
-                  onClick={() => onApprove(report.id)}
+                  onClick={handleApprove}
+                  disabled={isProcessing}
                 >
-                  Approve & Take Action
+                  {isProcessing ? 'Processing...' : 'Approve & Take Action'}
                 </button>
               </>
             )}

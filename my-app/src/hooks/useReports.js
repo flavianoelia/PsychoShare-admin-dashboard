@@ -41,12 +41,23 @@ export const useReports = () => {
     }
   }, [totalCount, pageSize]);
 
-  const handleStatusFilter = useCallback((status, filterType = 'status', value = null) => {
-    if (filterType === 'status') {
-      setFilters(prev => ({ ...prev, status }));
-    } else {
-      setFilters(prev => ({ ...prev, [filterType]: value }));
-    }
+  const handleStatusFilter = useCallback((status) => {
+    setFilters(prev => ({ ...prev, status }));
+    setCurrentPage(1);
+  }, []);
+
+  const handleDateFilter = useCallback((startDate, endDate) => {
+    setFilters(prev => ({ ...prev, startDate, endDate }));
+    setCurrentPage(1);
+  }, []);
+
+  const handleContentTypeFilter = useCallback((contentType) => {
+    setFilters(prev => ({ ...prev, contentType }));
+    setCurrentPage(1);
+  }, []);
+
+  const searchReports = useCallback((searchTerm) => {
+    setFilters(prev => ({ ...prev, search: searchTerm }));
     setCurrentPage(1);
   }, []);
 
@@ -84,6 +95,9 @@ export const useReports = () => {
     // Actions
     handlePageChange,
     handleStatusFilter,
+    handleDateFilter,
+    handleContentTypeFilter,
+    searchReports,
     clearFilters,
     resolveReport,
     refetchReports: fetchReports
