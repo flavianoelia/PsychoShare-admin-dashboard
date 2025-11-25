@@ -19,6 +19,7 @@ function Bans() {
     totalCount,
     hasMore,
     filters,
+    usersData,
     handlePageChange,
     handleStatusFilter,
     clearFilters,
@@ -57,15 +58,16 @@ function Bans() {
   };
 
   const handleUnban = async (userId, username) => {
+    const displayName = getUserDisplayName(userId, username);
     const confirmed = window.confirm(
-      `Are you sure you want to unban user "${username}"? This action cannot be undone.`
+      `Are you sure you want to unban user "${displayName}"? This action cannot be undone.`
     );
     
     if (confirmed) {
       try {
         const result = await unbanUser(userId);
         if (result.success) {
-          alert(`User "${username}" has been unbanned successfully.`);
+          alert(`User "${displayName}" has been unbanned successfully.`);
           // Refresh the bans list
           await refetchBans();
         } else {
@@ -76,6 +78,13 @@ function Bans() {
         alert('An error occurred while unbanning the user.');
       }
     }
+  };
+
+  // Función helper para obtener el nombre del usuario
+  const getUserDisplayName = (userId, fallback = null) => {
+    if (!userId) return fallback || 'Usuario Desconocido';
+    const user = usersData[userId];
+    return user ? user.fullName : fallback || `Usuario #${userId}`;
   };
 
   const calculateTimeRemaining = (expiryDate) => {
@@ -281,11 +290,11 @@ function Bans() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="avatar-sm bg-danger text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style={{width: '32px', height: '32px'}}>
-                                {ban.username?.charAt(0)?.toUpperCase()}
+                                {getUserDisplayName(ban.bannedUserId, ban.username).charAt(0)?.toUpperCase()}
                               </div>
                               <div>
-                                <div className="fw-bold">{ban.username}</div>
-                                <small className="text-muted">{ban.email}</small>
+                                <div className="fw-bold">{getUserDisplayName(ban.bannedUserId, ban.username)}</div>
+                                <small className="text-muted">{usersData[ban.bannedUserId]?.email || ban.email || `ID: ${ban.bannedUserId}`}</small>
                               </div>
                             </div>
                           </td>
@@ -312,9 +321,9 @@ function Bans() {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="avatar-sm bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{width: '24px', height: '24px', fontSize: '10px'}}>
-                                {ban.adminUsername?.charAt(0)?.toUpperCase() || 'A'}
+                                {getUserDisplayName(ban.bannedByAdminId, ban.adminUsername).charAt(0)?.toUpperCase() || 'A'}
                               </div>
-                              <small>{ban.adminUsername || 'System'}</small>
+                              <small>{getUserDisplayName(ban.bannedByAdminId, ban.adminUsername)}</small>
                             </div>
                           </td>
                           <td>
@@ -337,7 +346,7 @@ function Bans() {
                               {ban.isActive && (
                                 <button 
                                   className="btn btn-sm btn-outline-success"
-                                  onClick={() => handleUnban(ban.userId, ban.username || ban.userId)}
+                                  onClick={() => handleUnban(ban.bannedUserId, getUserDisplayName(ban.bannedUserId, ban.username))}
                                   title="Desbanear usuario"
                                 >
                                   🔓

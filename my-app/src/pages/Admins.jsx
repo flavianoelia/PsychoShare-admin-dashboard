@@ -4,7 +4,6 @@ import { rolesService } from '../services/admin/rolesService';
 
 function Admins() {
   const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,13 +32,6 @@ function Admins() {
     }
   }, []);
 
-  const fetchRoles = async () => {
-    const result = await rolesService.getAllRoles();
-    if (result.success) {
-      setRoles(result.roles);
-    }
-  };
-
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -66,9 +58,10 @@ function Admins() {
       }
 
       const data = await response.json();
-      setUsers(data.users || data.Users || []);
-      setTotalCount(data.totalCount || data.TotalCount || 0);
-      setHasMore(data.hasMore || data.HasMore || false);
+      // Backend devuelve: { users, totalCount, hasMore }
+      setUsers(data.users || []);
+      setTotalCount(data.totalCount || 0);
+      setHasMore(data.hasMore || false);
     } catch (err) {
       setError('Error al cargar usuarios');
       console.error('Error fetching users:', err);
@@ -76,10 +69,6 @@ function Admins() {
       setLoading(false);
     }
   }, [currentPage, searchTerm, roleFilter]);
-
-  useEffect(() => {
-    fetchRoles();
-  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -119,19 +108,47 @@ function Admins() {
 
   const getRoleBadgeClass = (roleName) => {
     switch (roleName) {
-      case 'User': return 'bg-secondary';
-      case 'Admin': return 'bg-primary';
-      case 'SuperAdmin': return 'bg-danger';
-      default: return 'bg-secondary';
+      case 'User':
+      case 'Usuario':
+        return 'bg-secondary';
+      case 'Admin':
+      case 'Administración':
+        return 'bg-primary';
+      case 'SuperAdmin':
+      case 'Superadmin':
+      case 'Superadministrador':
+        return 'bg-danger';
+      default:
+        return 'bg-secondary';
     }
+  };
+
+  const getRoleIdFromName = (roleName) => {
+    // Mapeo exacto del backend: User=1, Admin=2, Superadmin=3
+    const roleMap = {
+      'User': 1,
+      'Admin': 2,
+      'Superadmin': 3
+    };
+    return roleMap[roleName] || 1;
+  };
+
+  const getRoleNameFromId = (roleId) => {
+    const roleNames = {
+      1: 'Usuario',
+      2: 'Administración',
+      3: 'Superadministrador'
+    };
+    return roleNames[roleId] || 'Usuario';
   };
 
   const getEffectiveRole = (user) => {
     if (changedRoles[user.id]) {
-      const role = roles.find(r => r.id === changedRoles[user.id]);
-      return role ? role.name || role.Name : user.roleName || user.RoleName;
+      // Si hay cambio pendiente, mostrar en español
+      return getRoleNameFromId(changedRoles[user.id]);
     }
-    return user.roleName || user.RoleName;
+    // Convertir el rol del backend a español para display consistente
+    return getRoleNameFromId(getRoleIdFromName(user.roleName));
   };
 
   // Only SuperAdmin (role 3) can access this page
@@ -197,11 +214,9 @@ function Admins() {
             }}
           >
             <option value="">Todos los roles</option>
-            {roles.map(role => (
-              <option key={role.id || role.Id} value={role.id || role.Id}>
-                {role.name || role.Name}
-              </option>
-            ))}
+            <option value="User">Usuario</option>
+            <option value="Admin">Administración</option>
+            <option value="Superadmin">Superadministrador</option>
           </select>
         </div>
         <div className="col-md-3 text-end">
@@ -240,7 +255,7 @@ function Admins() {
               ) : (
                 users.map(user => {
                   const effectiveRole = getEffectiveRole(user);
-                  const userId = user.id || user.Id;
+                  const userId = user.id;
                   
                   return (
                     <tr key={userId}>
@@ -251,33 +266,35 @@ function Admins() {
                             className="avatar-sm bg-info text-white rounded-circle me-2 d-flex align-items-center justify-content-center" 
                             style={{width: '32px', height: '32px'}}
                           >
-                            {(user.name || user.Name)?.charAt(0)?.toUpperCase()}
+                            {user.name?.charAt(0)?.toUpperCase()}
                           </div>
-                          <span>{user.name || user.Name} {user.lastName || user.LastName}</span>
+                          <span>{user.name} {user.lastName}</span>
                         </div>
                       </td>
-                      <td>{user.email || user.Email}</td>
+                      <td>{user.email}</td>
                       <td>
                         <span className={`badge ${getRoleBadgeClass(effectiveRole)}`}>
-                          {effectiveRole}
-                          {changedRoles[userId] && ' (modificado)'}
+                          {effectiveRole || 'Usuario'}
+                          {changedRoles[userId] ? ' (modificado)' : ''}
                         </span>
                       </td>
                       <td>
                         <select
                           className="form-select form-select-sm"
-                          value={changedRoles[userId] || roles.find(r => (r.name || r.Name) === (user.roleName || user.RoleName))?.id || roles.find(r => (r.name || r.Name) === (user.roleName || user.RoleName))?.Id || 1}
+                          value={changedRoles[userId] || getRoleIdFromName(user.roleName)}
                           onChange={(e) => handleRoleChange(userId, e.target.value)}
                         >
-                          {roles.filter(role => (role.name || role.Name) !== 'SuperAdmin').map(role => (
-                            <option key={role.id || role.Id} value={role.id || role.Id}>
-                              {role.name || role.Name}
-                            </option>
-                          ))}
+                          <option value="1">Usuario</option>
+                          <option value="2">Administración</option>
+                          {currentUserRole === 3 && (
+                            <option value="3">Superadministrador</option>
+                          )}
                         </select>
-                        <small className="text-muted d-block mt-1">
-                          No se puede asignar SuperAdmin
-                        </small>
+                        {currentUserRole !== 3 && (
+                          <small className="text-muted d-block mt-1">
+                            No se puede asignar SuperAdmin
+                          </small>
+                        )}
                       </td>
                     </tr>
                   );

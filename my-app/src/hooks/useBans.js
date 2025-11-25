@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { bansService } from '../services/admin/bansService';
+import { getUsersByIds } from '../services/admin/userDataService';
 
 /**
  * Bans data and actions hook
@@ -14,13 +15,29 @@ export const useBans = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [filters, setFilters] = useState({});
+  const [usersData, setUsersData] = useState({});
 
   const fetchBans = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await bansService.getAllBans(currentPage, pageSize, filters);
-      setBans(data.bans || data.Bans || data);
+      const bansArray = data.bans || data.Bans || data;
+      
+      // Extraer todos los IDs de usuarios únicos
+      const userIds = new Set();
+      bansArray.forEach(ban => {
+        if (ban.bannedUserId) userIds.add(ban.bannedUserId);
+        if (ban.bannedByAdminId) userIds.add(ban.bannedByAdminId);
+      });
+      
+      // Cargar datos de usuarios en paralelo
+      if (userIds.size > 0) {
+        const users = await getUsersByIds([...userIds]);
+        setUsersData(users);
+      }
+      
+      setBans(bansArray);
       setTotalCount(data.totalCount || data.TotalCount || 0);
       setHasMore(data.hasMore || data.HasMore || false);
     } catch (err) {
@@ -133,6 +150,7 @@ export const useBans = () => {
     totalCount,
     hasMore,
     filters,
+    usersData,
     
     // Actions
     handlePageChange,

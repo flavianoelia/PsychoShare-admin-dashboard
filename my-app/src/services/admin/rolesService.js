@@ -61,13 +61,14 @@ export const rolesService = {
 
   assignRole: async (userId, roleId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/Role/user/${userId}`, {
-        method: 'PUT',
+      // Mapeo de roleId: 1 = User, 2 = Admin, 3 = Superadmin
+      const response = await fetch(`${API_BASE_URL}/api/user/${userId}/role`, {
+        method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ RoleId: roleId })
+        body: JSON.stringify({ roleType: parseInt(roleId) })
       });
 
       if (!response.ok) {

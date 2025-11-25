@@ -13,6 +13,7 @@ function Reports() {
     totalCount,
     hasMore,
     filters,
+    usersData,
     handlePageChange,
     handleStatusFilter,
     handleDateFilter,
@@ -70,6 +71,13 @@ function Reports() {
     if (searchTerm.trim()) {
       searchReports(searchTerm);
     }
+  };
+
+  // Función helper para obtener el nombre del usuario
+  const getUserDisplayName = (userId, fallback = 'Usuario Desconocido') => {
+    if (!userId) return fallback;
+    const user = usersData[userId];
+    return user ? user.fullName : `Usuario #${userId}`;
   };
 
   const getReportTypeBadgeColor = (type) => {
@@ -316,20 +324,20 @@ function Reports() {
                           <div className="d-flex align-items-center">
                             <div className="avatar-sm bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
                               <small className="text-white fw-bold">
-                                {report.reporterUsername?.charAt(0)?.toUpperCase() || '?'}
+                                {getUserDisplayName(report.reporterUserId).charAt(0)?.toUpperCase() || '?'}
                               </small>
                             </div>
-                            <span>{report.reporterUsername}</span>
+                            <span>{getUserDisplayName(report.reporterUserId)}</span>
                           </div>
                         </td>
                         <td>
                           <div className="d-flex align-items-center">
                             <div className="avatar-sm bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center">
                               <small className="text-white fw-bold">
-                                {report.reportedUsername?.charAt(0)?.toUpperCase() || '?'}
+                                {getUserDisplayName(report.reportedUserId).charAt(0)?.toUpperCase() || '?'}
                               </small>
                             </div>
-                            <span>{report.reportedUsername}</span>
+                            <span>{getUserDisplayName(report.reportedUserId)}</span>
                           </div>
                         </td>
                         <td>

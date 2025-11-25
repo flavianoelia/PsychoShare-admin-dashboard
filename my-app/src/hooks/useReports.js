@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { reportsService } from '../services/admin/reportsService';
+import { getUsersByIds } from '../services/admin/userDataService';
 
 /**
  * Reports data and actions hook
@@ -13,13 +14,29 @@ export const useReports = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [filters, setFilters] = useState({});
+  const [usersData, setUsersData] = useState({});
 
   const fetchReports = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await reportsService.getAllReports(currentPage, pageSize, filters);
-      setReports(data.reports || data.Reports || data);
+      const reportsArray = data.reports || data.Reports || data;
+      
+      // Extraer todos los IDs de usuarios únicos
+      const userIds = new Set();
+      reportsArray.forEach(report => {
+        if (report.reporterUserId) userIds.add(report.reporterUserId);
+        if (report.reportedUserId) userIds.add(report.reportedUserId);
+      });
+      
+      // Cargar datos de usuarios en paralelo
+      if (userIds.size > 0) {
+        const users = await getUsersByIds([...userIds]);
+        setUsersData(users);
+      }
+      
+      setReports(reportsArray);
       setTotalCount(data.totalCount || data.TotalCount || 0);
       setHasMore(data.hasMore || data.HasMore || false);
     } catch (err) {
@@ -91,6 +108,7 @@ export const useReports = () => {
     totalCount,
     hasMore,
     filters,
+    usersData,
     
     // Actions
     handlePageChange,
