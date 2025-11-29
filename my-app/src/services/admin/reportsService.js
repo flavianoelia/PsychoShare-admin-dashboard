@@ -14,6 +14,7 @@ export const reportsService = {
 
       const response = await fetch(`${API_BASE_URL}/api/Report?${params}`, {
         headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });

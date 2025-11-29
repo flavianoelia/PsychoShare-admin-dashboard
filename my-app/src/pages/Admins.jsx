@@ -23,9 +23,28 @@ function Admins() {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        // Try both claim formats
-        const roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        setCurrentUserRole(parseInt(roleClaim));
+        console.log('🔍 DEBUG Token decoded:', decoded);
+        
+        // Try to get role from claims
+        let roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        
+        // WORKAROUND: Backend no incluye rol en JWT, usar email como fallback
+        if (!roleClaim) {
+          console.warn('⚠️ Backend no incluye rol en JWT. Usando email como workaround.');
+          if (decoded.email === 'superadmin@psychoshare.com') {
+            roleClaim = '3'; // SuperAdmin
+            console.log('✅ Usuario identificado como SuperAdmin por email');
+          } else if (decoded.email && decoded.email.includes('admin')) {
+            roleClaim = '2'; // Admin
+          } else {
+            roleClaim = '1'; // User regular
+          }
+        }
+        
+        console.log('🔍 DEBUG Role claim:', roleClaim, 'Type:', typeof roleClaim);
+        const roleAsNumber = parseInt(roleClaim);
+        console.log('🔍 DEBUG Role as number:', roleAsNumber);
+        setCurrentUserRole(roleAsNumber);
       } catch (err) {
         console.error('Error decoding token:', err);
       }
