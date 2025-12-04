@@ -12,6 +12,9 @@ export const reportsService = {
         ...filters
       });
 
+      console.log('🔍 Llamando a:', `${API_BASE_URL}/api/Report?${params}`);
+      console.log('🔑 Token:', localStorage.getItem('token') ? 'Existe' : 'No existe');
+
       const response = await fetch(`${API_BASE_URL}/api/Report?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -19,7 +22,11 @@ export const reportsService = {
         }
       });
 
+      console.log('📡 Respuesta del backend:', response.status, response.statusText);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Error completo del backend:', errorText);
         console.error(`API Error: ${response.status} - ${response.statusText}`);
         throw new Error(`API Error: ${response.status}`);
       }
@@ -30,9 +37,11 @@ export const reportsService = {
       const transformedReports = (data.reports || data.Reports || data || []).map(report => ({
         id: report.Id || report.id,
         reporterUserId: report.ReporterUserId || report.reporterUserId,
-        reporterUsername: report.ReporterUsername || report.reporterUsername || `User_${report.ReporterUserId}`,
+        reporterUsername: report.ReporterUsername || report.reporterUsername || report.ReporterEmail || report.reporterEmail || `User_${report.ReporterUserId}`,
         reportedUserId: report.ReportedUserId || report.reportedUserId,
-        reportedUsername: report.ReportedUsername || report.reportedUsername || `User_${report.ReportedUserId}`,
+        reportedUsername: report.ReportedUsername || report.reportedUsername || report.ReportedEmail || report.reportedEmail || null,
+        reportedEmail: report.ReportedEmail || report.reportedEmail,
+        reporterEmail: report.ReporterEmail || report.reporterEmail,
         reason: report.Reason || report.reason,
         contentType: report.ContentType || report.contentType || report.ReportType || report.reportType,
         status: report.Status || report.status,
@@ -55,93 +64,93 @@ export const reportsService = {
       const mockReports = [
         {
           id: 1,
-          reporterUsername: "user123",
-          reporterEmail: "user123@example.com",
-          reportedUserId: "user456",
-          reportedUsername: "reported_user",
-          reportedEmail: "reported@example.com",
+          reporterUsername: "María González",
+          reporterEmail: "maria.gonzalez@psychoshare.com",
+          reportedUserId: "456",
+          reportedUsername: "Juan Pérez",
+          reportedEmail: "juan.perez@example.com",
           reason: "Harassment",
           status: "Pending",
           contentType: "Message",
           reportDate: "2024-01-15",
           createdAt: "2024-01-15T10:30:00Z",
-          description: "This user has been sending inappropriate messages and harassing other users in the platform."
+          description: "Este usuario ha estado enviando mensajes inapropiados y acosando a otros usuarios en la plataforma."
         },
         {
           id: 2,
-          reporterUsername: "moderator1",
-          reporterEmail: "mod1@example.com", 
-          reportedUserId: "user789",
-          reportedUsername: "spam_user",
-          reportedEmail: "spam@example.com",
+          reporterUsername: "Carlos Martínez",
+          reporterEmail: "carlos.martinez@psychoshare.com", 
+          reportedUserId: "789",
+          reportedUsername: "Ana López",
+          reportedEmail: "ana.lopez@example.com",
           reason: "Spam",
           status: "Approved",
           contentType: "Post",
           reportDate: "2024-01-14",
           createdAt: "2024-01-14T09:15:00Z",
           resolvedAt: "2024-01-14T15:30:00Z",
-          description: "User is posting repetitive spam content across multiple posts.",
-          adminNotes: "User has been warned and content removed."
+          description: "Usuario está publicando contenido repetitivo de spam en múltiples posts.",
+          adminNotes: "Usuario ha sido advertido y el contenido removido."
         },
         {
           id: 3,
-          reporterUsername: "user999",
-          reporterEmail: "user999@example.com",
-          reportedUserId: "user111",
-          reportedUsername: "fake_profile",
-          reportedEmail: "fake@example.com", 
+          reporterUsername: "Laura Fernández",
+          reporterEmail: "laura.fernandez@psychoshare.com",
+          reportedUserId: "111",
+          reportedUsername: "Pedro Sánchez",
+          reportedEmail: "pedro.sanchez@example.com", 
           reason: "Fake Profile",
           status: "Pending",
           contentType: "Profile",
           reportDate: "2024-01-16",
           createdAt: "2024-01-16T14:20:00Z",
-          description: "This appears to be a fake profile impersonating a celebrity."
+          description: "Este parece ser un perfil falso suplantando a una celebridad."
         },
         {
           id: 4,
-          reporterUsername: "admin_user",
-          reporterEmail: "admin@psychoshare.com",
-          reportedUserId: "user222",
-          reportedUsername: "offensive_user",
-          reportedEmail: "offensive@example.com",
+          reporterUsername: "Roberto Díaz",
+          reporterEmail: "roberto.diaz@psychoshare.com",
+          reportedUserId: "222",
+          reportedUsername: "Sofia Torres",
+          reportedEmail: "sofia.torres@example.com",
           reason: "Inappropriate Content",
           status: "Rejected",
           contentType: "Comment",
           reportDate: "2024-01-13",
           createdAt: "2024-01-13T16:45:00Z",
           resolvedAt: "2024-01-13T18:20:00Z",
-          description: "User posted offensive comments under multiple posts.",
-          adminNotes: "After review, content was found to be within community guidelines."
+          description: "Usuario publicó comentarios ofensivos en múltiples posts.",
+          adminNotes: "Después de revisión, el contenido está dentro de las normas de la comunidad."
         },
         {
           id: 5,
-          reporterUsername: "concerned_user",
-          reporterEmail: "concerned@example.com",
-          reportedUserId: "user333",
-          reportedUsername: "violator_user",
-          reportedEmail: "violator@example.com",
+          reporterUsername: "Elena Ruiz",
+          reporterEmail: "elena.ruiz@psychoshare.com",
+          reportedUserId: "333",
+          reportedUsername: "Miguel Ángel Castro",
+          reportedEmail: "miguel.castro@example.com",
           reason: "Violence/Threats",
           status: "Approved",
           contentType: "Post",
           reportDate: "2024-01-12",
           createdAt: "2024-01-12T11:20:00Z",
           resolvedAt: "2024-01-12T13:45:00Z",
-          description: "User made violent threats against other community members.",
-          adminNotes: "Account suspended and content removed."
+          description: "Usuario hizo amenazas violentas contra otros miembros de la comunidad.",
+          adminNotes: "Cuenta suspendida y contenido removido."
         },
         {
           id: 6,
-          reporterUsername: "watchful_mod",
-          reporterEmail: "watchful@psychoshare.com",
-          reportedUserId: "user444",
-          reportedUsername: "copyright_violator",
-          reportedEmail: "copyright@example.com",
+          reporterUsername: "Lucía Morales",
+          reporterEmail: "lucia.morales@psychoshare.com",
+          reportedUserId: "444",
+          reportedUsername: "Daniela Ramírez",
+          reportedEmail: "daniela.ramirez@example.com",
           reason: "Copyright Infringement",
           status: "Pending",
           contentType: "Post",
           reportDate: "2024-01-17",
           createdAt: "2024-01-17T08:30:00Z",
-          description: "User is sharing copyrighted material without permission."
+          description: "Usuario está compartiendo material con derechos de autor sin permiso."
         }
       ];
 

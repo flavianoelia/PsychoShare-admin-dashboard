@@ -19,32 +19,21 @@ function Admins() {
 
   useEffect(() => {
     // Check if current user is SuperAdmin
+    // Primero intentar obtener desde localStorage (más confiable)
+    const roleFromStorage = localStorage.getItem('role');
+    
+    if (roleFromStorage) {
+      setCurrentUserRole(roleFromStorage); // Guardar como string: "Superadmin", "Admin", etc.
+      return;
+    }
+    
+    // Fallback: decodificar del JWT
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log('🔍 DEBUG Token decoded:', decoded);
-        
-        // Try to get role from claims
-        let roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        
-        // WORKAROUND: Backend no incluye rol en JWT, usar email como fallback
-        if (!roleClaim) {
-          console.warn('⚠️ Backend no incluye rol en JWT. Usando email como workaround.');
-          if (decoded.email === 'superadmin@psychoshare.com') {
-            roleClaim = '3'; // SuperAdmin
-            console.log('✅ Usuario identificado como SuperAdmin por email');
-          } else if (decoded.email && decoded.email.includes('admin')) {
-            roleClaim = '2'; // Admin
-          } else {
-            roleClaim = '1'; // User regular
-          }
-        }
-        
-        console.log('🔍 DEBUG Role claim:', roleClaim, 'Type:', typeof roleClaim);
-        const roleAsNumber = parseInt(roleClaim);
-        console.log('🔍 DEBUG Role as number:', roleAsNumber);
-        setCurrentUserRole(roleAsNumber);
+        const roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        setCurrentUserRole(roleClaim);
       } catch (err) {
         console.error('Error decoding token:', err);
       }
@@ -170,8 +159,8 @@ function Admins() {
     return getRoleNameFromId(getRoleIdFromName(user.roleName));
   };
 
-  // Only SuperAdmin (role 3) can access this page
-  if (currentUserRole !== null && currentUserRole !== 3) {
+  // Only SuperAdmin (role "Superadmin") can access this page
+  if (currentUserRole !== null && currentUserRole !== 'Superadmin' && currentUserRole !== '3') {
     return (
       <div className="container mt-4">
         <div className="alert alert-danger" role="alert">

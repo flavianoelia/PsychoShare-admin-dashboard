@@ -11,31 +11,27 @@ function AdminAuthGuard({ children }) {
   }
 
   try {
-    const decoded = jwtDecode(token);
+    // Primero intentar obtener el rol desde localStorage (backend lo guarda al login)
+    const roleFromStorage = localStorage.getItem('role');
     
-    // Try to get role from claims
-    let roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    
-    // WORKAROUND: Backend no incluye rol en JWT, usar email como fallback
-    if (!roleClaim) {
-      console.warn('⚠️ AdminAuthGuard: Backend no incluye rol en JWT. Usando email como workaround.');
-      if (decoded.email === 'superadmin@psychoshare.com') {
-        roleClaim = '3'; // SuperAdmin
-      } else if (decoded.email && decoded.email.includes('admin')) {
-        roleClaim = '2'; // Admin
+    if (roleFromStorage) {
+      // El backend devuelve "Superadmin" o "Admin" como string
+      if (roleFromStorage === 'Superadmin' || roleFromStorage === 'Admin') {
+        return children;
       } else {
-        roleClaim = '1'; // User regular
+        return <Navigate to="/login" replace />;
       }
     }
     
-    const roleId = parseInt(roleClaim);
-
-    // Only Admin (2) and SuperAdmin (3) can access
-    if (roleId < 2 || isNaN(roleId)) {
-      return <Navigate to="/login" replace />;
+    // Fallback: decodificar del JWT si no está en localStorage
+    const decoded = jwtDecode(token);
+    const roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    
+    if (roleClaim === 'Superadmin' || roleClaim === 'Admin' || roleClaim === '3' || roleClaim === '2') {
+      return children;
     }
 
-    return children;
+    return <Navigate to="/login" replace />;
   } catch (error) {
     console.error('Invalid token:', error);
     return <Navigate to="/login" replace />;

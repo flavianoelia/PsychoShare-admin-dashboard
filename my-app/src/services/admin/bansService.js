@@ -252,12 +252,12 @@ export const bansService = {
       // Create new ban entry
       const newBan = {
         id: Math.floor(Math.random() * 1000) + 100,
-        userId: banData.userId || banData.username,
+        userId: banData.userId || String(Math.floor(Math.random() * 10000)),
         username: banData.username,
-        email: `${banData.username}@example.com`,
+        email: banData.email || `${banData.username}@example.com`,
         reason: banData.reason,
         adminUserId: "admin123",
-        adminUsername: "admin_moderator",
+        adminUsername: localStorage.getItem('username') || "Admin",
         banDate: new Date().toISOString(),
         expiryDate: banData.expiryDate,
         isActive: true,
