@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function BanUserModal({ isOpen, onClose, onBan }) {
+function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
   const [formData, setFormData] = useState({
     username: '',
     userId: '',
+    email: '',
     reason: '',
     banType: 'Temporary',
     duration: '7',
@@ -12,6 +13,23 @@ function BanUserModal({ isOpen, onClose, onBan }) {
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Pre-llenar formulario si viene userToBan desde un reporte
+  useEffect(() => {
+    if (userToBan) {
+      console.log('🔍 userToBan recibido:', userToBan);
+      console.log('🔍 username:', userToBan.username);
+      console.log('🔍 email:', userToBan.email);
+      console.log('🔍 userId:', userToBan.userId);
+      
+      setFormData(prev => ({
+        ...prev,
+        username: userToBan.username || userToBan.email || '',
+        userId: userToBan.userId || '',
+        email: userToBan.email || ''
+      }));
+    }
+  }, [userToBan]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -80,7 +98,8 @@ function BanUserModal({ isOpen, onClose, onBan }) {
     try {
       const banData = {
         username: formData.username.trim(),
-        userId: formData.userId || formData.username.trim(), // Fallback if userId not provided
+        userId: formData.userId || formData.username.trim(),
+        email: formData.email || formData.username.trim(),
         reason: formData.reason.trim(),
         banType: formData.banType,
         duration: formData.banType === 'Permanent' ? null : `${formData.duration} ${formData.durationUnit}`,
@@ -96,6 +115,7 @@ function BanUserModal({ isOpen, onClose, onBan }) {
         setFormData({
           username: '',
           userId: '',
+          email: '',
           reason: '',
           banType: 'Temporary',
           duration: '7',
@@ -121,6 +141,7 @@ function BanUserModal({ isOpen, onClose, onBan }) {
       setFormData({
         username: '',
         userId: '',
+        email: '',
         reason: '',
         banType: 'Temporary',
         duration: '7',

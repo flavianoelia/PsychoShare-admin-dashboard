@@ -19,13 +19,21 @@ function Admins() {
 
   useEffect(() => {
     // Check if current user is SuperAdmin
+    // Primero intentar obtener desde localStorage (más confiable)
+    const roleFromStorage = localStorage.getItem('role');
+    
+    if (roleFromStorage) {
+      setCurrentUserRole(roleFromStorage); // Guardar como string: "Superadmin", "Admin", etc.
+      return;
+    }
+    
+    // Fallback: decodificar del JWT
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        // Try both claim formats
         const roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        setCurrentUserRole(parseInt(roleClaim));
+        setCurrentUserRole(roleClaim);
       } catch (err) {
         console.error('Error decoding token:', err);
       }
@@ -151,8 +159,8 @@ function Admins() {
     return getRoleNameFromId(getRoleIdFromName(user.roleName));
   };
 
-  // Only SuperAdmin (role 3) can access this page
-  if (currentUserRole !== null && currentUserRole !== 3) {
+  // Only SuperAdmin (role "Superadmin") can access this page
+  if (currentUserRole !== null && currentUserRole !== 'Superadmin' && currentUserRole !== '3') {
     return (
       <div className="container mt-4">
         <div className="alert alert-danger" role="alert">

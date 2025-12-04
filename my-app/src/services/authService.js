@@ -23,11 +23,13 @@ export const authService = {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userId', data.userId);
         localStorage.setItem('email', data.email);
+        localStorage.setItem('role', data.role); // Guardar el rol del backend
         return {
           success: true,
           token: data.token,
           userId: data.userId,
-          email: data.email
+          email: data.email,
+          role: data.role
         };
       } else {
         throw new Error('Respuesta inválida del servidor');
@@ -45,6 +47,7 @@ export const authService = {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('email');
+    localStorage.removeItem('role');
   },
 
   isAuthenticated: () => {

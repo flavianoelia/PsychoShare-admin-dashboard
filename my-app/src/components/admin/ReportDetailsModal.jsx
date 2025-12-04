@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './ReportDetailsModal.css';
+import BanUserModal from './BanUserModal';
+import { bansService } from '../../services/admin/bansService';
 
 function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
   const [actionReason, setActionReason] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showBanModal, setShowBanModal] = useState(false);
 
   if (!isOpen || !report) return null;
 
@@ -27,6 +30,27 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
     }
   };
 
+  const handleBan = async (banData) => {
+    try {
+      console.log('🚫 Intentando banear usuario:', banData);
+      const result = await bansService.banUser(banData);
+      console.log('✅ Usuario baneado exitosamente:', result);
+      
+      // Cerrar ambos modales
+      setShowBanModal(false);
+      
+      // Opcionalmente, aprobar el reporte automáticamente
+      if (report.status === 'Pending') {
+        await onApprove(report.id, `Usuario baneado: ${banData.reason}`);
+      }
+      
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Error al banear usuario:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   return (
     <div className="modal fade show d-block report-modal-overlay">
       <div className="modal-dialog modal-lg report-modal-dialog">
@@ -45,13 +69,13 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
             <div className="row">
               <div className="col-md-6">
                 <h6 className="fw-bold">Reporter Information</h6>
-                <p><strong>Username:</strong> {report.reporterUsername}</p>
+                <p><strong>Username:</strong> {report.reporterUsername || report.reporterEmail || 'N/A'}</p>
                 <p><strong>Email:</strong> {report.reporterEmail || 'N/A'}</p>
               </div>
               
               <div className="col-md-6">
                 <h6 className="fw-bold">Reported User</h6>
-                <p><strong>Username:</strong> {report.reportedUsername}</p>
+                <p><strong>Username:</strong> {report.reportedUsername || report.reportedEmail || 'N/A'}</p>
                 <p><strong>Email:</strong> {report.reportedEmail || 'N/A'}</p>
               </div>
             </div>
@@ -115,6 +139,22 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
               <>
                 <button 
                   type="button" 
+                  className="btn btn-warning" 
+                  onClick={() => {
+                    console.log('📋 Report completo:', report);
+                    console.log('📧 reportedEmail:', report.reportedEmail);
+                    console.log('👤 reportedUsername:', report.reportedUsername);
+                    console.log('🆔 reportedUserId:', report.reportedUserId);
+                    setShowBanModal(true);
+                  }}
+                  disabled={isProcessing}
+                  title="Banear al usuario reportado directamente"
+                >
+                  <i className="bi bi-ban me-1"></i>
+                  Banear Usuario
+                </button>
+                <button 
+                  type="button" 
                   className="btn btn-danger" 
                   onClick={handleReject}
                   disabled={isProcessing}
@@ -134,6 +174,21 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
           </div>
         </div>
       </div>
+
+      {/* Modal de Baneo */}
+      {showBanModal && (
+        <BanUserModal 
+          isOpen={showBanModal}
+          onClose={() => setShowBanModal(false)}
+          userToBan={{
+            email: report.reportedEmail,
+            username: report.reportedUsername || report.reportedEmail,
+            userId: report.reportedUserId
+          }}
+          reportId={report.id}
+          onBan={handleBan}
+        />
+      )}
     </div>
   );
 }

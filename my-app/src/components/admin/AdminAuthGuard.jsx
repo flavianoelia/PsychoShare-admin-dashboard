@@ -11,17 +11,27 @@ function AdminAuthGuard({ children }) {
   }
 
   try {
+    // Primero intentar obtener el rol desde localStorage (backend lo guarda al login)
+    const roleFromStorage = localStorage.getItem('role');
+    
+    if (roleFromStorage) {
+      // El backend devuelve "Superadmin" o "Admin" como string
+      if (roleFromStorage === 'Superadmin' || roleFromStorage === 'Admin') {
+        return children;
+      } else {
+        return <Navigate to="/login" replace />;
+      }
+    }
+    
+    // Fallback: decodificar del JWT si no está en localStorage
     const decoded = jwtDecode(token);
-    // Try both claim formats
     const roleClaim = decoded['role'] || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    const roleId = parseInt(roleClaim);
-
-    // Only Admin (2) and SuperAdmin (3) can access
-    if (roleId < 2) {
-      return <Navigate to="/login" replace />;
+    
+    if (roleClaim === 'Superadmin' || roleClaim === 'Admin' || roleClaim === '3' || roleClaim === '2') {
+      return children;
     }
 
-    return children;
+    return <Navigate to="/login" replace />;
   } catch (error) {
     console.error('Invalid token:', error);
     return <Navigate to="/login" replace />;
