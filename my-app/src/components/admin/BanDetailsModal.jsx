@@ -73,26 +73,26 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
       >
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">🚫 Ban Details - #{ban.id}</h5>
+            <h5 className="modal-title">🚫 Detalles del Ban - #{ban.id}</h5>
             <button 
               type="button" 
               className="btn-close" 
               onClick={onClose}
-              aria-label="Close"
+              aria-label="Cerrar"
             ></button>
           </div>
           
           <div className="modal-body">
             <div className="row">
               <div className="col-md-6">
-                <h6 className="fw-bold">User Information</h6>
+                <h6 className="fw-bold">Informacion del usuario</h6>
                 <p><strong>Username:</strong> {ban.username}</p>
                 <p><strong>Email:</strong> {ban.email || 'N/A'}</p>
                 <p><strong>User ID:</strong> {ban.userId}</p>
               </div>
               
               <div className="col-md-6">
-                <h6 className="fw-bold">Admin Information</h6>
+                <h6 className="fw-bold">Informacion del admin</h6>
                 <p><strong>Banned by:</strong> {ban.adminUsername}</p>
                 <p><strong>Admin ID:</strong> {ban.adminUserId || 'N/A'}</p>
               </div>
@@ -102,37 +102,37 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
             
             <div className="row">
               <div className="col-12">
-                <h6 className="fw-bold">Ban Details</h6>
-                <p><strong>Reason:</strong> <span className="badge bg-warning text-dark">{ban.reason}</span></p>
-                <p><strong>Type:</strong> 
-                  <span className={`badge ms-2 ${ban.banType === 'Permanent' ? 'bg-danger' : 'bg-info'}`}>
+                <h6 className="fw-bold">Detalles del ban</h6>
+                <p><strong>Razón:</strong> <span className="badge bg-warning text-dark">{ban.reason}</span></p>
+                <p><strong>Tipo:</strong> 
+                  <span className={`badge ms-2 ${ban.banType === 'Permanente' ? 'bg-danger' : 'bg-info'}`}>
                     {ban.banType}
                   </span>
                 </p>
-                <p><strong>Status:</strong> 
+                <p><strong> Estado:</strong> 
                   <span className={`badge ms-2 ${ban.isActive ? 'bg-success' : 'bg-secondary'}`}>
-                    {ban.isActive ? 'Active' : 'Expired/Lifted'}
+                    {ban.isActive ? 'Activo' : 'Expired/Lifted'}
                   </span>
                 </p>
-                <p><strong>Duration:</strong> {ban.duration}</p>
-                <p><strong>Ban Date:</strong> {new Date(ban.banDate).toLocaleString()}</p>
+                <p><strong>Duracion:</strong> {ban.duration}</p>
+                <p><strong>Ban fecha:</strong> {new Date(ban.banDate).toLocaleString()}</p>
                 {ban.expiryDate && (
-                  <p><strong>Expiry Date:</strong> {new Date(ban.expiryDate).toLocaleString()}</p>
+                  <p><strong>Fecha de expiro:</strong> {new Date(ban.expiryDate).toLocaleString()}</p>
                 )}
                 {ban.unbanDate && (
-                  <p><strong>Unbanned Date:</strong> {new Date(ban.unbanDate).toLocaleString()}</p>
+                  <p><strong>Fecha no prohibida:</strong> {new Date(ban.unbanDate).toLocaleString()}</p>
                 )}
               </div>
             </div>
             
-            {ban.isActive && ban.banType === 'Temporary' && ban.expiryDate && (
+            {ban.isActive && ban.banType === 'Temporal' && ban.expiryDate && (
               <>
                 <hr />
                 <div className="row">
                   <div className="col-12">
-                    <h6 className="fw-bold">Time Remaining</h6>
+                    <h6 className="fw-bold">Tiempo restante</h6>
                     <div className="alert alert-info">
-                      <strong>⏰ {calculateTimeRemaining(ban.expiryDate)}</strong> until ban expires
+                      <strong>⏰ {calculateTimeRemaining(ban.expiryDate)}</strong> hasta que expire la prohibición
                     </div>
                   </div>
                 </div>
@@ -143,7 +143,7 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
               <>
                 <hr />
                 <div className="alert alert-danger">
-                  <strong>⚠️ This is a permanent ban.</strong> The user will remain banned until manually unbanned by an administrator.
+                  <strong>⚠️ Esta es una prohibición permanente.</strong> El usuario permanecerá baneado hasta que un administrador lo levante manualmente.
                 </div>
               </>
             )}
@@ -153,7 +153,7 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
                 <hr />
                 <div className="row">
                   <div className="col-12">
-                    <h6 className="fw-bold">Additional Notes</h6>
+                    <h6 className="fw-bold">Notas Adiccionales</h6>
                     <div className="alert alert-light">
                       {ban.notes}
                     </div>
@@ -169,7 +169,7 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
               className="btn btn-secondary" 
               onClick={onClose}
             >
-              Cercar
+              Cerrar
             </button>
             
             {ban.isActive && (
@@ -180,7 +180,7 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
                 disabled={isUnbanning}
                 style={{ pointerEvents: isUnbanning ? 'none' : 'auto' }}
               >
-                {isUnbanning ? '🔄 Processing...' : '🔓 Desbloquear usuario'}
+                {isUnbanning ? '🔄 Procesando...' : '🔓 Desbloquear usuario'}
               </button>
             )}
           </div>

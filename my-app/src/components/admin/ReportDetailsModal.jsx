@@ -144,19 +144,19 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
       </div>
 
       {/* Modal de Baneo */}
-      {showBanModal && (
-        <BanUserModal 
-          isOpen={showBanModal}
-          onClose={() => setShowBanModal(false)}
-          userToBan={{
-            email: report.reportedEmail,
-            username: report.reportedUsername || report.reportedEmail,
-            userId: report.reportedUserId
-          }}
-          reportId={report.id}
-          onBan={handleBan}
-        />
-      )}
+      <BanUserModal 
+        isOpen={showBanModal}
+        onClose={() => setShowBanModal(false)}
+        userToBan={{
+          username: report.reportedUsername ?? "",
+          userId: report.reportedUserId ?? "",
+          email: report.reportedEmail ?? "",
+          reason: report.reason ?? ""
+        }}
+        reportId={report.id}
+        onBan={handleBan}
+      />
+
     </div>
   );
 }

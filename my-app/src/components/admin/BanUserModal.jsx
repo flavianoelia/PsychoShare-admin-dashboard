@@ -6,30 +6,29 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
     userId: '',
     email: '',
     reason: '',
-    banType: 'Temporary',
+    banType: 'Temporal',
     duration: '7',
-    durationUnit: 'days',
+    durationUnit: 'dias',
     notes: ''
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
 
   // Pre-llenar formulario si viene userToBan desde un reporte
-  useEffect(() => {
-    if (userToBan) {
-      console.log('🔍 userToBan recibido:', userToBan);
-      console.log('🔍 username:', userToBan.username);
-      console.log('🔍 email:', userToBan.email);
-      console.log('🔍 userId:', userToBan.userId);
-      
-      setFormData(prev => ({
-        ...prev,
-        username: userToBan.username || userToBan.email || '',
-        userId: userToBan.userId || '',
-        email: userToBan.email || ''
-      }));
-    }
-  }, [userToBan]);
+useEffect(() => {
+  if (!userToBan) return;
+
+  console.log("🟡 Datos recibidos en BanUserModal:", userToBan);
+
+  setFormData(prev => ({
+    ...prev,
+    username: userToBan.username || "",
+    userId: userToBan.userId || "",
+    email: userToBan.email || "",
+    reason: userToBan.reason || ""
+  }));
+}, [userToBan, isOpen]);
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -166,7 +165,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
               className="btn-close btn-close-white" 
               onClick={handleClose}
               disabled={isProcessing}
-              aria-label="Close"
+              aria-label="Cerrar"
             ></button>
           </div>
           
@@ -225,13 +224,13 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                   <option value="Harassment">Acoso</option>
                   <option value="Spam">Spam</option>
                   <option value="Inappropriate Content">Contenido Inapropiado</option>
-                  <option value="Hate Speech">Hate Speech</option>
-                  <option value="Violence/Threats">Violence/Threats</option>
-                  <option value="Identity Theft">Identity Theft</option>
-                  <option value="Copyright Infringement">Copyright Infringement</option>
-                  <option value="Bot Activity">Bot Activity</option>
-                  <option value="Multiple Violations">Multiple Violations</option>
-                  <option value="Other">Other</option>
+                  <option value="Hate Speech">Incitación al odio</option>
+                  <option value="Violence/Threats">Violencia/Amenazas</option>
+                  <option value="Identity Theft">Robo de identidad</option>
+                  <option value="Copyright Infringement">Infracción de derechos de autor</option>
+                  <option value="Bot Activity">Actividad de bots</option>
+                  <option value="Multiple Violations">Multiple Infracciones</option>
+                  <option value="Other">Otro</option>
                 </select>
                 {errors.reason && (
                   <div className="invalid-feedback">{errors.reason}</div>
@@ -241,7 +240,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
               <div className="row">
                 <div className="col-md-4">
                   <div className="mb-3">
-                    <label className="form-label">Ban Type</label>
+                    <label className="form-label">Tipo de ban</label>
                     <select 
                       className="form-select"
                       name="banType"
@@ -249,8 +248,8 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                       onChange={handleInputChange}
                       disabled={isProcessing}
                     >
-                      <option value="Temporary">Temporary Ban</option>
-                      <option value="Permanent">Permanent Ban</option>
+                      <option value="Temporary">Temporal Ban</option>
+                      <option value="Permanent">Permanente Ban</option>
                     </select>
                   </div>
                 </div>
@@ -259,7 +258,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                   <>
                     <div className="col-md-4">
                       <div className="mb-3">
-                        <label className="form-label">Duration *</label>
+                        <label className="form-label">Duracion *</label>
                         <input 
                           type="number"
                           className={`form-control ${errors.duration ? 'is-invalid' : ''}`}
@@ -277,7 +276,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                     
                     <div className="col-md-4">
                       <div className="mb-3">
-                        <label className="form-label">Unit</label>
+                        <label className="form-label">Unidad</label>
                         <select 
                           className="form-select"
                           name="durationUnit"
@@ -285,10 +284,10 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                           onChange={handleInputChange}
                           disabled={isProcessing}
                         >
-                          <option value="hours">Hours</option>
-                          <option value="days">Days</option>
-                          <option value="weeks">Weeks</option>
-                          <option value="months">Months</option>
+                          <option value="hours">Horas</option>
+                          <option value="days">Dias</option>
+                          <option value="weeks">Semanas</option>
+                          <option value="months">Meses</option>
                         </select>
                       </div>
                     </div>
@@ -297,7 +296,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Additional Notes</label>
+                <label className="form-label">Notas Adiccionales</label>
                 <textarea 
                   className="form-control"
                   name="notes"
@@ -311,13 +310,13 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
 
               {formData.banType === 'Temporary' && formData.duration && (
                 <div className="alert alert-info">
-                  <strong>📅 Ban will expire:</strong> {calculateExpiryDate()?.toLocaleString()}
+                  <strong>📅 La prohibición expirará:</strong> {calculateExpiryDate()?.toLocaleString()}
                 </div>
               )}
               
               {formData.banType === 'Permanent' && (
                 <div className="alert alert-danger">
-                  <strong>⚠️ This is a permanent ban!</strong> The user will not be able to access the platform unless manually unbanned.
+                  <strong>⚠️ Esta es una prohibición permanente!</strong> El usuario no podrá acceder a la plataforma a menos que se le desbanee manualmente.
                 </div>
               )}
             </div>
@@ -329,7 +328,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                 onClick={handleClose}
                 disabled={isProcessing}
               >
-                Cancel
+                Cancelar
               </button>
               <button 
                 type="submit" 
@@ -339,7 +338,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                 {isProcessing ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                    Banning User...
+                    Baneando User...
                   </>
                 ) : (
                   <>🔒 Ban User</>
