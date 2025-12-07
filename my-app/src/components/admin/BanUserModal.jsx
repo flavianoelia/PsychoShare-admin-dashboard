@@ -35,16 +35,16 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
     const newErrors = {};
     
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = 'Username es requerido';
     }
     
     if (!formData.reason.trim()) {
-      newErrors.reason = 'Reason is required';
+      newErrors.reason = 'Razon del baneo es requerida';
     }
     
-    if (formData.banType === 'Temporary') {
+    if (formData.banType === 'Temporal') {
       if (!formData.duration || formData.duration <= 0) {
-        newErrors.duration = 'Duration must be greater than 0';
+        newErrors.duration = 'La duración debe ser mayor que 0';
       }
     }
     
@@ -69,19 +69,19 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
   };
 
   const calculateExpiryDate = () => {
-    if (formData.banType === 'Permanent') return null;
+    if (formData.banType === 'Permanente') return null;
     
     const now = new Date();
     const duration = parseInt(formData.duration);
     
     switch (formData.durationUnit) {
-      case 'hours':
+      case 'horas':
         return new Date(now.getTime() + duration * 60 * 60 * 1000);
-      case 'days':
+      case 'dias':
         return new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
-      case 'weeks':
+      case 'semanas':
         return new Date(now.getTime() + duration * 7 * 24 * 60 * 60 * 1000);
-      case 'months':
+      case 'meses':
         return new Date(now.getTime() + duration * 30 * 24 * 60 * 60 * 1000);
       default:
         return new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
@@ -102,7 +102,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
         email: formData.email || formData.username.trim(),
         reason: formData.reason.trim(),
         banType: formData.banType,
-        duration: formData.banType === 'Permanent' ? null : `${formData.duration} ${formData.durationUnit}`,
+        duration: formData.banType === 'Permanente' ? null : `${formData.duration} ${formData.durationUnit}`,
         expiryDate: calculateExpiryDate(),
         notes: formData.notes.trim(),
         banDate: new Date().toISOString()
@@ -117,20 +117,20 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
           userId: '',
           email: '',
           reason: '',
-          banType: 'Temporary',
+          banType: 'Temporal',
           duration: '7',
-          durationUnit: 'days',
+          durationUnit: 'dias',
           notes: ''
         });
         setErrors({});
         onClose();
-        alert('User banned successfully!');
+        alert('Usuario baneado con exito!');
       } else {
-        alert(result.error || 'Error banning user');
+        alert(result.error || 'Error al banear usuario.');
       }
     } catch (error) {
-      console.error('Error submitting ban:', error);
-      alert('Error banning user. Please try again.');
+      console.error('Error al enviar la prohibición:', error);
+      alert('Error al banear usuario. Intente de nuevo.');
     } finally {
       setIsProcessing(false);
     }
@@ -143,9 +143,9 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
         userId: '',
         email: '',
         reason: '',
-        banType: 'Temporary',
+        banType: 'Temporal',
         duration: '7',
-        durationUnit: 'days',
+        durationUnit: 'dias',
         notes: ''
       });
       setErrors({});
@@ -173,8 +173,8 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
               <div className="alert alert-warning">
-                <strong>⚠️ Warning:</strong> Banning a user will prevent them from accessing the platform. 
-                Make sure you have reviewed the case thoroughly.
+                <strong>⚠️ Cuidado:</strong> Bloquear a un usuario le impedirá acceder a la plataforma.
+                Asegúrese de revisar el caso a fondo.
               </div>
 
               <div className="row">
@@ -198,7 +198,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                 
                 <div className="col-md-6">
                   <div className="mb-3">
-                    <label className="form-label">User ID (optional)</label>
+                    <label className="form-label">User ID (opcional)</label>
                     <input 
                       type="text"
                       className="form-control"
@@ -213,7 +213,7 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Reason for Ban *</label>
+                <label className="form-label">Razón del ban</label>
                 <select 
                   className={`form-select ${errors.reason ? 'is-invalid' : ''}`}
                   name="reason"
@@ -221,10 +221,10 @@ function BanUserModal({ isOpen, onClose, onBan, userToBan }) {
                   onChange={handleInputChange}
                   disabled={isProcessing}
                 >
-                  <option value="">Select a reason</option>
-                  <option value="Harassment">Harassment</option>
+                  <option value=""><s>Selecionar la razón</s></option>
+                  <option value="Harassment">Acoso</option>
                   <option value="Spam">Spam</option>
-                  <option value="Inappropriate Content">Inappropriate Content</option>
+                  <option value="Inappropriate Content">Contenido Inapropiado</option>
                   <option value="Hate Speech">Hate Speech</option>
                   <option value="Violence/Threats">Violence/Threats</option>
                   <option value="Identity Theft">Identity Theft</option>

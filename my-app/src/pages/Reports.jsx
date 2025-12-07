@@ -83,21 +83,21 @@ function Reports() {
   const getReportTypeBadgeColor = (type) => {
     const colors = {
       'Spam': 'bg-warning',
-      'Harassment': 'bg-danger',
-      'Inappropriate Content': 'bg-info',
-      'Fake Profile': 'bg-secondary',
-      'Copyright Violation': 'bg-primary',
-      'Violence': 'bg-dark',
-      'Other': 'bg-light text-dark'
+      'Acoso': 'bg-danger',
+      'Contenido inapropiadot': 'bg-info',
+      'Perfil falso': 'bg-secondary',
+      'Infracción de derechos de autor': 'bg-primary',
+      'Violencia': 'bg-dark',
+      'Otro': 'bg-light text-dark'
     };
     return colors[type] || 'bg-light text-dark';
   };
 
   const getStatusBadgeColor = (status) => {
     switch (status) {
-      case 'Pending': return 'bg-warning text-dark';
-      case 'Approved': return 'bg-success';
-      case 'Rejected': return 'bg-danger';
+      case 'Pendiente': return 'bg-warning text-dark';
+      case 'Aprobado': return 'bg-success';
+      case 'Rechazado': return 'bg-danger';
       default: return 'bg-secondary';
     }
   };
@@ -107,7 +107,7 @@ function Reports() {
       <div className="container mt-4">
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">Cargando</span>
           </div>
         </div>
       </div>
@@ -210,12 +210,12 @@ function Reports() {
                     >
                       <option value="">Todos los tipos</option>
                       <option value="Spam">Spam</option>
-                      <option value="Harassment">Harassment</option>
-                      <option value="Inappropriate Content">Inappropriate Content</option>
-                      <option value="Fake Profile">Fake Profile</option>
-                      <option value="Copyright Violation">Copyright Violation</option>
-                      <option value="Violence">Violence</option>
-                      <option value="Other">Other</option>
+                      <option value="Harassment">Acoso</option>
+                      <option value="Inappropriate Content">Contenido inapropiado</option>
+                      <option value="Fake Profile">Perfil Falso</option>
+                      <option value="Copyright Violation">Infracción de derechos de autor</option>
+                      <option value="Violence">Violencia</option>
+                      <option value="Other">Otro</option>
                     </select>
                   </div>
 
@@ -294,13 +294,13 @@ function Reports() {
                 <thead className="table-dark">
                   <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">👤 Reporter</th>
-                    <th scope="col">🎯 Reported User</th>
-                    <th scope="col">📝 Reason</th>
-                    <th scope="col">📊 Type</th>
-                    <th scope="col">⚡ Status</th>
-                    <th scope="col">📅 Date</th>
-                    <th scope="col" className="text-center">🔧 Actions</th>
+                    <th scope="col">👤 Reportero</th>
+                    <th scope="col">🎯 Usuario reportado</th>
+                    <th scope="col">📝 Razón</th>
+                    <th scope="col">📊 Tipo</th>
+                    <th scope="col">⚡ Estado</th>
+                    <th scope="col">📅 Fecha</th>
+                    <th scope="col" className="text-center">🔧 Acciones</th>
                   </tr>
                 </thead>
                 <tbody>

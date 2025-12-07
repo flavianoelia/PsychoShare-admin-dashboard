@@ -40,7 +40,7 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
       setShowBanModal(false);
       
       // Opcionalmente, aprobar el reporte automáticamente
-      if (report.status === 'Pending') {
+      if (report.status === 'Pendiente') {
         await onApprove(report.id, `Usuario baneado: ${banData.reason}`);
       }
       
@@ -56,7 +56,7 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
       <div className="modal-dialog modal-lg report-modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Report Details - #{report.id}</h5>
+            <h5 className="modal-title">Detalles del reporte - #{report.id}</h5>
             <button 
               type="button" 
               className="btn-close" 
@@ -67,36 +67,20 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
           
           <div className="modal-body">
             <div className="row">
-              <div className="col-md-6">
-                <h6 className="fw-bold">Reporter Information</h6>
-                <p><strong>Username:</strong> {report.reporterUsername || report.reporterEmail || 'N/A'}</p>
-                <p><strong>Email:</strong> {report.reporterEmail || 'N/A'}</p>
-              </div>
-              
-              <div className="col-md-6">
-                <h6 className="fw-bold">Reported User</h6>
-                <p><strong>Username:</strong> {report.reportedUsername || report.reportedEmail || 'N/A'}</p>
-                <p><strong>Email:</strong> {report.reportedEmail || 'N/A'}</p>
-              </div>
-            </div>
-            
-            <hr />
-            
-            <div className="row">
               <div className="col-12">
-                <h6 className="fw-bold">Report Details</h6>
-                <p><strong>Reason:</strong> <span className="badge bg-warning">{report.reason}</span></p>
-                <p><strong>Status:</strong> 
+                <h6 className="fw-bold">Detalles del reporte</h6>
+                <p><strong>Razón:</strong> <span className="badge bg-warning">{report.reason}</span></p>
+                <p><strong>Estado:</strong> 
                   <span className={`badge ms-2 ${
-                    report.status === 'Pending' ? 'bg-warning' : 
-                    report.status === 'Resolved' ? 'bg-success' : 'bg-secondary'
+                    report.status === 'Pendiente' ? 'bg-warning' : 
+                    report.status === 'Resuelta' ? 'bg-success' : 'bg-secondary'
                   }`}>
                     {report.status}
                   </span>
                 </p>
-                <p><strong>Created:</strong> {new Date(report.createdAt).toLocaleString()}</p>
+                <p><strong>Creado:</strong> {new Date(report.createdAt).toLocaleString()}</p>
                 {report.resolvedAt && (
-                  <p><strong>Resolved:</strong> {new Date(report.resolvedAt).toLocaleString()}</p>
+                  <p><strong>Resuelto:</strong> {new Date(report.resolvedAt).toLocaleString()}</p>
                 )}
               </div>
             </div>
@@ -106,7 +90,7 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
                 <hr />
                 <div className="row">
                   <div className="col-12">
-                    <h6 className="fw-bold">Description</h6>
+                    <h6 className="fw-bold">Descripcion</h6>
                     <p className="report-description-box">{report.description}</p>
                   </div>
                 </div>
@@ -118,7 +102,7 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
                 <hr />
                 <div className="row">
                   <div className="col-12">
-                    <h6 className="fw-bold">Admin Notes</h6>
+                    <h6 className="fw-bold">Admin Notas</h6>
                     <p className="report-admin-notes">{report.adminNotes}</p>
                   </div>
                 </div>
@@ -132,7 +116,7 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
               className="btn btn-secondary" 
               onClick={onClose}
             >
-              Close
+              Cerrar
             </button>
             
             {report.status === 'Pending' && (
@@ -152,22 +136,6 @@ function ReportDetailsModal({ report, isOpen, onClose, onApprove, onReject }) {
                 >
                   <i className="bi bi-ban me-1"></i>
                   Banear Usuario
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-danger" 
-                  onClick={handleReject}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? 'Processing...' : 'Reject Report'}
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-success" 
-                  onClick={handleApprove}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? 'Processing...' : 'Approve & Take Action'}
                 </button>
               </>
             )}
