@@ -19,7 +19,7 @@ function Login() {
       
       if (result.success) {
         // Redirigir al dashboard
-        navigate('/admin/reports');
+        navigate('/admin/home');
       } else {
         setError(result.error || 'Error al iniciar sesión');
       }
@@ -59,7 +59,7 @@ function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    placeholder="admin@psychoshare.com"
+                    placeholder=""
                     disabled={loading}
                   />
                 </div>
@@ -75,7 +75,7 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    placeholder="••••••••"
+                    placeholder=""
                     disabled={loading}
                   />
                 </div>

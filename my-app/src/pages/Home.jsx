@@ -8,22 +8,14 @@ function Home() {
       <div className="row mt-4">
         <div className="col-md-3">
           <div className="card text-center">
-            <div className="card-body">
-              <h5 className="card-title">Usuarios Totales</h5>
-              <p className="card-text display-4">150</p>
-            </div>
           </div>
         </div>
         <div className="col-md-3">
           <div className="card text-center">
-            <div className="card-body">
-              <h5 className="card-title">Reportes Pendientes</h5>
-              <p className="card-text display-4">8</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
