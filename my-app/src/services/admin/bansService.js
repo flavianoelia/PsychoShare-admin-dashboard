@@ -40,27 +40,39 @@ export const bansService = {
 
       const data = await response.json();
       
+      console.log('🟤 BANSSERVICE - Datos RAW del backend:', data);
+      
+      // El backend devuelve { Bans: [...], TotalCount, Page, Size, HasMore }
+      const bansArray = data.Bans || data.bans || data || [];
+      console.log('🟤 BANSSERVICE - Primer ban sin transformar:', bansArray[0]);
+      
       // Transform backend data to frontend format
-      const transformedBans = (data.bans || data.Bans || data || []).map(ban => ({
+      const transformedBans = bansArray.map(ban => {
+        console.log('🟤 BANSSERVICE - Transformando ban:', ban);
+        return {
         id: ban.Id || ban.id,
-        userId: ban.BannedUserId || ban.bannedUserId,
+        bannedUserId: ban.BannedUserId || ban.bannedUserId,
         username: ban.Username || ban.username || `User_${ban.BannedUserId || ban.bannedUserId}`,
-        email: ban.Email || ban.email || `${ban.Username || `user${ban.BannedUserId}`}@example.com`,
+        email: ban.Email || ban.email || `user${ban.BannedUserId || ban.bannedUserId}@example.com`,
         reason: ban.Reason || ban.reason,
-        adminUserId: ban.BannedByAdminId || ban.bannedByAdminId,
-        adminUsername: ban.AdminUsername || ban.adminUsername || (ban.BannedByAdminId || ban.bannedByAdminId ? `Admin_${ban.BannedByAdminId || ban.bannedByAdminId}` : 'Sistema'),
+        bannedByAdminId: ban.BannedByAdminId || ban.bannedByAdminId,
+        bannedByAdminId: ban.BannedByAdminId || ban.bannedByAdminId,
+        adminUsername: ban.AdminUsername || ban.adminUsername || `Admin #${ban.BannedByAdminId || ban.bannedByAdminId || 'Unknown'}`,
         banDate: ban.StartDate || ban.startDate || ban.banDate,
         expiryDate: ban.EndDate || ban.endDate || ban.expiryDate,
-        isActive: ban.IsActive !== undefined ? ban.IsActive : ban.isActive !== undefined ? ban.isActive : true,
+        isActive: ban.IsActive !== undefined ? ban.IsActive : (ban.isActive !== undefined ? ban.isActive : true),
         banType: ban.BanType || ban.banType,
         duration: ban.Duration || ban.duration || calculateDuration(ban.StartDate || ban.startDate, ban.EndDate || ban.endDate),
-        notes: ban.Notes || ban.notes || ban.reason
-      }));
+        notes: ban.Notes || ban.notes || ban.Reason || ban.reason
+      };
+      });
+
+      console.log('🟤 BANSSERVICE - Bans transformados:', transformedBans);
 
       return {
         bans: transformedBans,
-        totalCount: data.totalCount || data.TotalCount || transformedBans.length,
-        hasMore: data.hasMore || data.HasMore || false
+        totalCount: data.TotalCount || data.totalCount || transformedBans.length,
+        hasMore: data.HasMore || data.hasMore || false
       };
     } catch (error) {
       console.warn('API not available, using mock data:', error);

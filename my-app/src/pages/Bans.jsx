@@ -58,6 +58,7 @@ function Bans() {
   };
 
   const handleUnban = async (userId, username) => {
+    console.log('🟠 HANDLEUNBAN - userId recibido:', userId, 'username:', username);
     const displayName = getUserDisplayName(userId, username);
     const confirmed = window.confirm(
       `Are you sure you want to unban user "${displayName}"? This action cannot be undone.`
@@ -65,6 +66,7 @@ function Bans() {
     
     if (confirmed) {
       try {
+        console.log('🟠 HANDLEUNBAN - Llamando unbanUser con userId:', userId);
         const result = await unbanUser(userId);
         if (result.success) {
           alert(`User "${displayName}" has been unbanned successfully.`);
