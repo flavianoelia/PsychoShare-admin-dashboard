@@ -19,7 +19,7 @@ function Login() {
       
       if (result.success) {
         // Redirigir al dashboard
-        navigate('/admin/home');
+        navigate('/admin/reports');
       } else {
         setError(result.error || 'Error al iniciar sesión');
       }

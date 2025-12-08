@@ -284,7 +284,9 @@ function Bans() {
                         </td>
                       </tr>
                     ) : (
-                      bans.map(ban => (
+                      bans.map(ban => {
+                        console.log('🔵 Ban data:', { id: ban.id, userId: ban.bannedUserId, isActive: ban.isActive, banType: ban.banType });
+                        return (
                         <tr key={ban.id}>
                           <td>#{ban.id}</td>
                           <td>
@@ -355,7 +357,8 @@ function Bans() {
                             </div>
                           </td>
                         </tr>
-                      ))
+                        );
+                      })
                     )}
                   </tbody>
                 </table>

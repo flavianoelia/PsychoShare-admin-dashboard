@@ -301,6 +301,9 @@ export const bansService = {
 
   unbanUser: async (userId) => {
     try {
+      console.log('🟣 UNBAN - userId:', userId);
+      console.log('🟣 UNBAN - URL:', `${API_BASE_URL}/api/Ban/${userId}`);
+      
       // The API endpoint uses BannedUserId, not the ban.Id
       const response = await fetch(`${API_BASE_URL}/api/Ban/${userId}`, {
         method: 'DELETE',
@@ -310,12 +313,24 @@ export const bansService = {
         }
       });
       
+      console.log('🟣 UNBAN - Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('🟣 UNBAN - Error:', errorText);
+        
+        if (response.status === 401) {
+          alert('❌ Sesión expirada. Por favor, volvé a iniciar sesión.');
+          localStorage.clear();
+          window.location.href = '/login';
+          return { success: false, error: 'Unauthorized' };
+        }
+        
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
       
       const result = await response.json();
-      console.log('Unban API response:', result);
+      console.log('🟣 UNBAN - Respuesta exitosa:', result);
       return {
         success: true,
         message: 'User unbanned successfully',
