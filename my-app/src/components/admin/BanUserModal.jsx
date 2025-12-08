@@ -107,6 +107,9 @@ useEffect(() => {
         banDate: new Date().toISOString()
       };
       
+      console.log('🟢 MODAL - Datos del formulario antes de enviar:', formData);
+      console.log('🟢 MODAL - banData construido:', banData);
+      
       const result = await onBan(banData);
       
       if (result.success) {

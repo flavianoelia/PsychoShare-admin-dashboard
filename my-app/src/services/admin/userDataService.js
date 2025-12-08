@@ -24,7 +24,17 @@ export const getUserById = async (userId) => {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
+      console.warn(`Usuario ${userId} no encontrado (${response.status}), usando datos por defecto`);
+      // Retornar datos por defecto en vez de null
+      const defaultUser = {
+        id: userId,
+        name: `Usuario`,
+        lastName: `#${userId}`,
+        email: `user${userId}@example.com`,
+        fullName: `Usuario #${userId}`
+      };
+      userCache.set(userId, defaultUser);
+      return defaultUser;
     }
 
     const userData = await response.json();
@@ -41,7 +51,16 @@ export const getUserById = async (userId) => {
     return result;
   } catch (error) {
     console.error(`Error fetching user ${userId}:`, error);
-    return null;
+    // Retornar datos por defecto en caso de error
+    const defaultUser = {
+      id: userId,
+      name: `Usuario`,
+      lastName: `#${userId}`,
+      email: `user${userId}@example.com`,
+      fullName: `Usuario #${userId}`
+    };
+    userCache.set(userId, defaultUser);
+    return defaultUser;
   }
 };
 

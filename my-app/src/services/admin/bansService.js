@@ -214,6 +214,8 @@ export const bansService = {
 
   banUser: async (banData) => {
     try {
+      console.log('🔴 BANSSERVICE - Datos recibidos:', banData);
+      
       // Map frontend data to backend expected format
       const backendBanData = {
         BannedUserId: parseInt(banData.userId || banData.username), // Convert to number
@@ -225,6 +227,9 @@ export const bansService = {
         Reason: banData.reason
       };
 
+      console.log('🔴 BANSSERVICE - Datos a enviar al backend:', backendBanData);
+      console.log('🔴 BANSSERVICE - URL:', `${API_BASE_URL}/api/Ban`);
+
       const response = await fetch(`${API_BASE_URL}/api/Ban`, {
         method: 'POST',
         headers: {
@@ -234,11 +239,25 @@ export const bansService = {
         body: JSON.stringify(backendBanData)
       });
       
+      console.log('🔴 BANSSERVICE - Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('🔴 BANSSERVICE - Error del backend:', errorText);
+        
+        if (response.status === 401) {
+          alert('❌ Sesión expirada. Por favor, volvé a iniciar sesión.');
+          localStorage.clear();
+          window.location.href = '/login';
+          return { success: false, error: 'Unauthorized - Token expirado' };
+        }
+        
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('🔴 BANSSERVICE - Respuesta exitosa:', result);
+      return result;
     } catch (error) {
       console.warn('API not available, using mock response:', error);
       
