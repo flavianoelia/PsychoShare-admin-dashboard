@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
   const [isUnbanning, setIsUnbanning] = useState(false);
-  
+
   if (!isOpen || !ban) return null;
 
   const calculateTimeRemaining = (expiryDate) => {
@@ -23,37 +23,32 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
     return `${minutes} minutes`;
   };
 
-  const handleUnban = () => {
-    console.log('Unban button clicked');
-    
-    if (isUnbanning) {
-      console.log('Already processing, ignoring...');
-      return;
-    }
-    
-    const confirmed = window.confirm(
-      `Are you sure you want to unban user "${ban.username || ban.userId}"? This action cannot be undone.`
-    );
-    
-    if (confirmed) {
-      setIsUnbanning(true);
-      console.log('Calling onUnban...');
-      
-      try {
-        onUnban(ban.userId, ban.username || ban.userId);
-        console.log('onUnban called successfully');
-        
-        // Close modal after a short delay
-        setTimeout(() => {
-          onClose();
-          setIsUnbanning(false);
-        }, 500);
-      } catch (error) {
-        console.error('Error calling onUnban:', error);
-        setIsUnbanning(false);
-      }
-    }
-  };
+const handleUnban = () => {
+  if (isUnbanning) return;
+
+  const displayName = ban.username || `ID ${ban.bannedUserId}`;
+
+  const confirmed = window.confirm(
+    `Are you sure you want to unban user "${displayName}"? This action cannot be undone.`
+  );
+
+  if (!confirmed) return;
+
+  setIsUnbanning(true);
+
+  // LLAMADA CORRECTA
+  onUnban(
+    ban.bannedUserId,   // 1) id
+    displayName,        // 2) nombre real
+    true                // 3) skipConfirm → NO llamar confirmación del padre
+  );
+
+  setTimeout(() => {
+    onClose();
+    setIsUnbanning(false);
+  }, 300);
+};
+
 
   return (
     <div 
@@ -61,129 +56,100 @@ function BanDetailsModal({ ban, isOpen, onClose, onUnban }) {
       className="modal fade show d-block" 
       style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}
       onClick={(e) => {
-        // Only close if clicking the overlay, not the modal content
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
+        if (e.target === e.currentTarget) onClose();
       }}
     >
       <div 
         className="modal-dialog modal-lg"
-        onClick={(e) => e.stopPropagation()} // Prevent modal from closing when clicking inside
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
+
           <div className="modal-header">
             <h5 className="modal-title">🚫 Detalles del Ban - #{ban.id}</h5>
-            <button 
-              type="button" 
-              className="btn-close" 
-              onClick={onClose}
-              aria-label="Cerrar"
-            ></button>
+            <button className="btn-close" onClick={onClose}></button>
           </div>
-          
+
           <div className="modal-body">
-            <div className="row">
-              <div className="col-md-6">
-                <h6 className="fw-bold">Informacion del usuario</h6>
-                <p><strong>Username:</strong> {ban.username}</p>
-                <p><strong>Email:</strong> {ban.email || 'N/A'}</p>
-                <p><strong>User ID:</strong> {ban.userId}</p>
-              </div>
-              
-              <div className="col-md-6">
-                <h6 className="fw-bold">Informacion del admin</h6>
-                <p><strong>Banned by:</strong> {ban.adminUsername}</p>
-                <p><strong>Admin ID:</strong> {ban.adminUserId || 'N/A'}</p>
-              </div>
-            </div>
-            
-            <hr />
-            
-            <div className="row">
-              <div className="col-12">
-                <h6 className="fw-bold">Detalles del ban</h6>
-                <p><strong>Razón:</strong> <span className="badge bg-warning text-dark">{ban.reason}</span></p>
-                <p><strong>Tipo:</strong> 
-                  <span className={`badge ms-2 ${ban.banType === 'Permanente' ? 'bg-danger' : 'bg-info'}`}>
-                    {ban.banType}
-                  </span>
-                </p>
-                <p><strong> Estado:</strong> 
-                  <span className={`badge ms-2 ${ban.isActive ? 'bg-success' : 'bg-secondary'}`}>
-                    {ban.isActive ? 'Activo' : 'Expired/Lifted'}
-                  </span>
-                </p>
-                <p><strong>Duracion:</strong> {ban.duration}</p>
-                <p><strong>Ban fecha:</strong> {new Date(ban.banDate).toLocaleString()}</p>
-                {ban.expiryDate && (
-                  <p><strong>Fecha de expiro:</strong> {new Date(ban.expiryDate).toLocaleString()}</p>
-                )}
-                {ban.unbanDate && (
-                  <p><strong>Fecha no prohibida:</strong> {new Date(ban.unbanDate).toLocaleString()}</p>
-                )}
-              </div>
-            </div>
-            
-            {ban.isActive && ban.banType === 'Temporal' && ban.expiryDate && (
+
+            {/* DETALLES */}
+            <h6 className="fw-bold">Detalles del ban</h6>
+
+            <p><strong>Razón:</strong> 
+              <span className="badge bg-warning text-dark ms-2">{ban.reason}</span>
+            </p>
+
+            <p><strong>Tipo:</strong>
+              <span className={`badge ms-2 ${ban.banType === 'Permanent' ? 'bg-danger' : 'bg-info'}`}>
+                {ban.banType}
+              </span>
+            </p>
+
+            <p><strong>Estado:</strong>
+              <span className={`badge ms-2 ${ban.isActive ? 'bg-success' : 'bg-secondary'}`}>
+                {ban.isActive ? 'Activo' : 'Expired/Lifted'}
+              </span>
+            </p>
+
+            <p><strong>Duración:</strong> {ban.duration}</p>
+            <p><strong>Ban fecha:</strong> {new Date(ban.banDate).toLocaleString()}</p>
+
+            {ban.expiryDate && (
+              <p><strong>Expira:</strong> {new Date(ban.expiryDate).toLocaleString()}</p>
+            )}
+
+            {ban.unbanDate && (
+              <p><strong>Desbaneado el:</strong> {new Date(ban.unbanDate).toLocaleString()}</p>
+            )}
+
+            {/* Tiempo restante */}
+            {ban.isActive && ban.banType !== 'Permanent' && ban.expiryDate && (
               <>
                 <hr />
-                <div className="row">
-                  <div className="col-12">
-                    <h6 className="fw-bold">Tiempo restante</h6>
-                    <div className="alert alert-info">
-                      <strong>⏰ {calculateTimeRemaining(ban.expiryDate)}</strong> hasta que expire la prohibición
-                    </div>
-                  </div>
+                <h6 className="fw-bold">Tiempo restante</h6>
+                <div className="alert alert-info">
+                  <strong>⏰ {calculateTimeRemaining(ban.expiryDate)}</strong>
                 </div>
               </>
             )}
-            
+
+            {/* Advertencia permanente */}
             {ban.banType === 'Permanent' && ban.isActive && (
               <>
                 <hr />
                 <div className="alert alert-danger">
-                  <strong>⚠️ Esta es una prohibición permanente.</strong> El usuario permanecerá baneado hasta que un administrador lo levante manualmente.
+                  <strong>⚠️ Ban permanente:</strong> solo puede levantarse manualmente.
                 </div>
               </>
             )}
-            
+
+            {/* Notas */}
             {ban.notes && (
               <>
                 <hr />
-                <div className="row">
-                  <div className="col-12">
-                    <h6 className="fw-bold">Notas Adiccionales</h6>
-                    <div className="alert alert-light">
-                      {ban.notes}
-                    </div>
-                  </div>
-                </div>
+                <h6 className="fw-bold">Notas adicionales</h6>
+                <div className="alert alert-light">{ban.notes}</div>
               </>
             )}
+
           </div>
-          
+
           <div className="modal-footer">
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={onClose}
-            >
+            <button className="btn btn-secondary" onClick={onClose}>
               Cerrar
             </button>
-            
+
             {ban.isActive && (
               <button 
-                type="button" 
-                className="btn btn-success" 
-                onClick={handleUnban}
+                className="btn btn-success"
                 disabled={isUnbanning}
-                style={{ pointerEvents: isUnbanning ? 'none' : 'auto' }}
+                onClick={handleUnban}
               >
                 {isUnbanning ? '🔄 Procesando...' : '🔓 Desbloquear usuario'}
               </button>
             )}
           </div>
+
         </div>
       </div>
     </div>

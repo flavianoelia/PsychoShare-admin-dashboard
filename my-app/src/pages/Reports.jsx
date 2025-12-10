@@ -258,20 +258,6 @@ function Reports() {
             >
               ⏳ Pending
             </button>
-            <button 
-              className={`btn ${filters.status === 'Approved' ? 'btn-success' : 'btn-outline-success'}`}
-              onClick={() => handleStatusFilter('Approved')}
-              type="button"
-            >
-              ✅ Approved
-            </button>
-            <button 
-              className={`btn ${filters.status === 'Rejected' ? 'btn-danger' : 'btn-outline-danger'}`}
-              onClick={() => handleStatusFilter('Rejected')}
-              type="button"
-            >
-              ❌ Rejected
-            </button>
           </div>
         </div>
         <div className="col-md-4 text-end">
@@ -377,24 +363,6 @@ function Reports() {
                             >
                               👁️
                             </button>
-                            {report.status === 'Pending' && (
-                              <>
-                                <button 
-                                  className="btn btn-sm btn-outline-success"
-                                  onClick={() => handleApproveReport(report.id)}
-                                  title="Aprobar reporte"
-                                >
-                                  ✅
-                                </button>
-                                <button 
-                                  className="btn btn-sm btn-outline-danger"
-                                  onClick={() => handleRejectReport(report.id)}
-                                  title="Rechazar reporte"
-                                >
-                                  ❌
-                                </button>
-                              </>
-                            )}
                           </div>
                         </td>
                       </tr>

@@ -57,36 +57,48 @@ function Bans() {
     openModal(ban);
   };
 
-  const handleUnban = async (userId, username) => {
-    console.log('🟠 HANDLEUNBAN - userId recibido:', userId, 'username:', username);
-    const displayName = getUserDisplayName(userId, username);
-    const confirmed = window.confirm(
-      `Are you sure you want to unban user "${displayName}"? This action cannot be undone.`
-    );
-    
-    if (confirmed) {
-      try {
-        console.log('🟠 HANDLEUNBAN - Llamando unbanUser con userId:', userId);
-        const result = await unbanUser(userId);
-        if (result.success) {
-          alert(`User "${displayName}" has been unbanned successfully.`);
-          // Refresh the bans list
-          await refetchBans();
-        } else {
-          alert('Failed to unban user: ' + (result.message || 'Unknown error'));
-        }
-      } catch (error) {
-        console.error('Error unbanning user:', error);
-        alert('An error occurred while unbanning the user.');
-      }
-    }
-  };
+// Antes:
+// const handleUnban = async (userId, username) => { 
 
+// Ahora, acepta los 3 parámetros:
+const handleUnban = async (userId, username, skipConfirm = false) => {
+    console.log('🟠 HANDLEUNBAN - userId recibido:', userId, 'username:', username, 'skipConfirm:', skipConfirm);
+    
+    // Obtener el nombre para la confirmación
+    const displayName = getUserDisplayName(username); 
+    
+    let confirmed = true; // Asumimos confirmado si el modal ya lo hizo (skipConfirm=true)
+
+    // Solo pide confirmación si NO viene del modal (donde ya se confirmó)
+    if (!skipConfirm) { 
+        confirmed = window.confirm(
+            `Are you sure you want to unban user "${displayName}"? This action cannot be undone.`
+        );
+    }
+    
+    // Si no se confirmó (o si venía del modal y ya se confirmó en el modal)
+    if (confirmed) {
+        try {
+            console.log('🟠 HANDLEUNBAN - Llamando unbanUser con userId:', userId);
+            const result = await unbanUser(userId);
+            if (result.success) {
+                alert(`User "${displayName}" has been unbanned successfully.`);
+                // Refresh the bans list
+                await refetchBans();
+            } else {
+                alert('Failed to unban user: ' + (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error unbanning user:', error);
+            alert('An error occurred while unbanning the user.');
+        }
+    }
+};
   // Función helper para obtener el nombre del usuario
-  const getUserDisplayName = (userId, fallback = null) => {
-    if (!userId) return fallback || 'Usuario Desconocido';
-    const user = usersData[userId];
-    return user ? user.fullName : fallback || `Usuario #${userId}`;
+  const getUserDisplayName = (username, fallback = null) => {
+    if (!username) return fallback || 'Usuario Desconocido';
+    const user = usersData[username];
+    return user ? user.fullName : fallback || `${username}`;
   };
 
   const calculateTimeRemaining = (expiryDate) => {
@@ -177,20 +189,6 @@ function Bans() {
             >
               🚫 All Bans
             </button>
-            <button 
-              className={`btn ${filters.status === 'active' ? 'btn-danger' : 'btn-outline-danger'}`}
-              onClick={() => handleStatusFilter('active')}
-              type="button"
-            >
-              ⚡ Active Bans
-            </button>
-            <button 
-              className={`btn ${filters.status === 'expired' ? 'btn-secondary' : 'btn-outline-secondary'}`}
-              onClick={() => handleStatusFilter('expired')}
-              type="button"
-            >
-              ⏰ Expired/Lifted
-            </button>
           </div>
         </div>
         <div className="col-md-4 text-end">
@@ -205,58 +203,16 @@ function Bans() {
         </div>
       </div>
 
-      {/* Advanced Filters */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="card">
-            <div className="card-header">
-              <h5 className="mb-0">🎯 Filtros Avanzados</h5>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-md-3">
-                  <label className="form-label">Tipo de Ban</label>
-                  <select 
-                    className="form-select"
-                    value={filters.banType || ''}
-                    onChange={(e) => handleStatusFilter('banType', 'banType', e.target.value)}
-                  >
-                    <option value="">Todos los tipos</option>
-                    <option value="Temporary">Temporario</option>
-                    <option value="Permanent">Permanente</option>
-                  </select>
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label">📅 Fecha Desde</label>
-                  <input 
-                    type="date"
-                    className="form-control"
-                    value={filters.dateFrom || ''}
-                    onChange={(e) => handleStatusFilter('dateFrom', 'dateFrom', e.target.value)}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label">📅 Fecha Hasta</label>
-                  <input 
-                    type="date"
-                    className="form-control"
-                    value={filters.dateTo || ''}
-                    onChange={(e) => handleStatusFilter('dateTo', 'dateTo', e.target.value)}
-                  />
-                </div>
-                <div className="col-md-3 d-flex align-items-end">
-                  <button 
-                    className="btn btn-outline-secondary w-100"
-                    onClick={clearFilters}
-                  >
-                    🗑️ Limpiar Filtros
-                  </button>
-                </div>
+        {/* Advanced Filters (removed) */}
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="card">
+              <div className="card-header">
               </div>
+              {/* Filtros eliminados */}
             </div>
           </div>
         </div>
-      </div>
       
       {/* Tabla de Usuarios Baneados */}
       <div className="row">
