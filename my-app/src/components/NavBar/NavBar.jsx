@@ -4,9 +4,19 @@ import './NavBar.css'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authService } from '../../services/authService';
 
 function NavBar() {
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem('token');
+  const userEmail = localStorage.getItem('email');
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login');
+  };
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -17,6 +27,22 @@ function NavBar() {
             <Nav.Link as={Link} to="/admin/reports">Reportes</Nav.Link>
             <Nav.Link as={Link} to="/admin/bans">Usuarios Baneados</Nav.Link>
             <Nav.Link as={Link} to="/admin/admins">Administradores</Nav.Link>
+          </Nav>
+          <Nav className="ms-auto">
+            {isLoggedIn ? (
+              <>
+                <Navbar.Text className="me-3">
+                  👤 {userEmail}
+                </Navbar.Text>
+                <Nav.Link onClick={handleLogout} style={{cursor: 'pointer'}}>
+                  🚪 Cerrar Sesión
+                </Nav.Link>
+              </>
+            ) : (
+              <Nav.Link as={Link} to="/login">
+                🔐 Iniciar Sesión
+              </Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
