@@ -1,6 +1,18 @@
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5174';
 
+// Helper function to format date for backend (yyyy-MM-dd HH:mm:ss)
+const formatPostDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
 // Helper function to calculate duration
 const calculateDuration = (startDate, endDate) => {
   if (!endDate) return 'Permanent';
@@ -229,17 +241,17 @@ export const bansService = {
       console.log('🔴 BANSSERVICE - Datos recibidos:', banData);
       
       // Map frontend data to backend expected format
-      const backendBanData = {
+      const createBanDto = {
         BannedUserId: parseInt(banData.userId || banData.username), // Convert to number
         BannedByAdminId: 1, // Hardcoded admin ID for now
         BanType: banData.banType,
         RelatedReportId: null, // Optional
         StartDate: new Date().toISOString(),
-        EndDate: banData.expiryDate,
+        EndDate: banData.expiryDate ? new Date(banData.expiryDate).toISOString() : null,
         Reason: banData.reason
       };
 
-      console.log('🔴 BANSSERVICE - Datos a enviar al backend:', backendBanData);
+      console.log('🔴 BANSSERVICE - Datos a enviar al backend:', createBanDto);
       console.log('🔴 BANSSERVICE - URL:', `${API_BASE_URL}/api/Ban`);
 
       const response = await fetch(`${API_BASE_URL}/api/Ban`, {
@@ -248,7 +260,7 @@ export const bansService = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(backendBanData)
+        body: JSON.stringify(createBanDto)
       });
       
       console.log('🔴 BANSSERVICE - Response status:', response.status);
